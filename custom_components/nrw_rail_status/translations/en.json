@@ -4,16 +4,17 @@
     "step": {
       "user": {
         "title": "Set up NRW Rail Status",
-        "description": "This integration displays current disruptions and messages from the NRW rail network."
+        "description": "This integration displays current disruptions and messages from the NRW rail network (Zuginfo.nrw / HAFAS HIM)."
       }
     },
     "error": {
-      "cannot_connect": "Failed to connect to the API",
-      "unknown": "Unknown error"
+      "cannot_connect": "Failed to connect to the API.",
+      "unknown": "Unknown error."
     },
     "abort": {
-      "already_configured": "This integration is already configured."
+      "single_instance_allowed": "This integration is already configured."
     }
   }
 }
+
 
