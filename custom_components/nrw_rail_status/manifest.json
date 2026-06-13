@@ -8,5 +8,6 @@
   "codeowners": ["@mgutsch42"],
   "iot_class": "cloud_polling",
   "integration_type": "hub",
+  "config_flow": true,
   "loggers": ["custom_components.nrw_rail_status"]
 }
