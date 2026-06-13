@@ -12,26 +12,26 @@ Die bisher verwendete Datenquelle
 liefert seit Kurzem dauerhaft den HTTP‑Status **404 – Not Found**.
 
 Damit ist die API nicht mehr erreichbar und die Integration kann aktuell  
+**keine Störungsdaten laden**. Die Einrichtung in Home Assistant schlägt deshalb mit einem Einrichtungsfehler fehl.
+
+Die Integration selbst funktioniert technisch korrekt – die Ursache liegt ausschließlich in der nicht mehr verfügbaren API.
+
+Es wird derzeit geprüft, ob alternative Datenquellen (z. B. DB Transport REST API, NRW OpenData oder eine mögliche neue Zuginfo‑API) genutzt werden können.  
+Sobald eine stabile Quelle verfügbar ist, wird die Integration entsprechend aktualisiert.
+
+---
+
 ## 🤝 Mitmachen & API‑Alternativen gesucht
 
-Da die bisherige Datenquelle (https://www.zuginfo.nrw/api/ris) nicht mehr verfügbar ist,
-suchen wir gemeinsam nach einer neuen, stabilen API für Störungs‑ und Betriebsinformationen
-im NRW‑Bahnnetz.
-
-Wenn du Ideen, Hinweise oder API‑Vorschläge hast, bist du herzlich eingeladen,
-dich zu beteiligen!
+Da die ursprüngliche API nicht mehr existiert, suchen wir gemeinsam nach einer neuen, stabilen Datenquelle für Störungs‑ und Betriebsinformationen im NRW‑Bahnnetz.
 
 ### 🔍 Gesucht werden insbesondere:
 - Vorschläge für **öffentliche oder dokumentierte APIs**  
 - Hinweise auf **NRW‑ oder DB‑Datenquellen**  
 - Links zu **OpenData‑Portalen**  
 - Beispiele für **GTFS‑RT‑Feeds**  
-- Eigene Recherchen zu **Zuginfo.nrw** oder möglichen Nachfolge‑APIs  
+- Recherchen zu einer möglichen neuen **Zuginfo‑API**  
 - Erfahrungen mit der **DB Transport REST API** (transport.rest)
-
-### 🛠️ Aktueller Stand der Entwicklung
-Parallel wird bereits an einer möglichen Umstellung auf die  
-**DB Transport REST API** gearbeitet, um weiterhin Störungsdaten bereitstellen zu können.
 
 ### 💬 Wie du mitmachen kannst
 - Erstelle ein **Issue** mit deinem Vorschlag  
@@ -41,10 +41,11 @@ Parallel wird bereits an einer möglichen Umstellung auf die
 
 Jede Unterstützung ist willkommen — gemeinsam finden wir eine Lösung!
 
-
 ---
 
 ## 🚆 Funktionsumfang (ursprüngliche Version)
+
+> Hinweis: Dieser Funktionsumfang ist derzeit nicht nutzbar, da die API nicht mehr erreichbar ist.
 
 - Abfrage der öffentlichen RIS‑API von Zuginfo.nrw  
 - Automatische Aktualisierung alle 60 Sekunden  
@@ -53,11 +54,11 @@ Jede Unterstützung ist willkommen — gemeinsam finden wir eine Lösung!
   - **Attribute:** Details zur *ersten* Störung
   - **raw:** komplette JSON‑Liste aller Störungen (für Dashboards)
 
-> Hinweis: Dieser Funktionsumfang ist derzeit nicht nutzbar, da die API nicht mehr erreichbar ist.
-
 ---
 
 ## 📦 Installation über HACS
+
+> Hinweis: Die Einrichtung schlägt aktuell fehl, da die API nicht erreichbar ist.
 
 1. HACS → **Integrationen**
 2. Rechts oben: **Custom repositories**
@@ -71,11 +72,11 @@ Jede Unterstützung ist willkommen — gemeinsam finden wir eine Lösung!
 7. Home Assistant neu starten
 8. Integration hinzufügen: **NRW Rail Status**
 
-> Hinweis: Die Einrichtung schlägt aktuell fehl, da die API nicht erreichbar ist.
-
 ---
 
 ## 🧩 Sensor‑Details (ursprüngliche Version)
+
+> Hinweis: Dieser Sensor wird aktuell nicht erzeugt, da die API nicht erreichbar ist.
 
 ### Sensor: `sensor.nrw_rail_status_sensor`
 
@@ -93,8 +94,6 @@ Jede Unterstützung ist willkommen — gemeinsam finden wir eine Lösung!
 | `end`          | Ende (falls bekannt) |
 | `last_update`  | Zeitstempel der letzten Aktualisierung |
 | `raw`          | komplette JSON‑Liste aller Störungen |
-
-> Hinweis: Dieser Sensor wird aktuell nicht erzeugt, da die API nicht erreichbar ist.
 
 ---
 
