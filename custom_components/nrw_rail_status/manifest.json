@@ -12,3 +12,4 @@
   "platforms": ["sensor"],
   "loggers": ["custom_components.nrw_rail_status"]
 }
+
