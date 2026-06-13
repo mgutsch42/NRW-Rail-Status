@@ -10,6 +10,7 @@ from homeassistant.helpers.update_coordinator import (
     DataUpdateCoordinator,
     UpdateFailed,
 )
+from homeassistant.helpers import aiohttp_client
 
 from .const import DOMAIN, DEFAULT_UPDATE_INTERVAL
 from .api import NRWHimApi
@@ -29,8 +30,11 @@ class NRWRailStatusCoordinator(DataUpdateCoordinator):
             update_interval=timedelta(seconds=DEFAULT_UPDATE_INTERVAL),
         )
 
-        # Home Assistant stellt eine Session bereit → nutzen!
-        self.api = NRWHimApi(hass.helpers.aiohttp_client.async_get_clientsession())
+        # KORREKTE Session aus Home Assistant
+        session = aiohttp_client.async_get_clientsession(hass)
+
+        # API initialisieren
+        self.api = NRWHimApi(session)
 
     async def _async_update_data(self):
         """Fetch data from the API."""
