@@ -40,5 +40,58 @@ Funktionen, Struktur und API‑Verhalten können sich jederzeit ändern.
 ## 📦 Installation über HACS
 
 ### 1. Custom Repository hinzufügen  
+
+https://github.com/mgutsch42/nrw-rail-status
+
+
+Typ: **Integration**
+
+### 2. Integration installieren  
+Nach dem Hinzufügen erscheint die Integration in HACS und kann installiert werden.
+
+### 3. Home Assistant neu starten
+
+---
+
+## 🛠 Manuelle Installation
+
+Falls du die Integration ohne HACS installieren möchtest:
+
+1. Ordner erstellen:
+
+/config/custom_components/nrw_rail_status/
+
+
+2. Alle Dateien aus diesem Repository in diesen Ordner kopieren  
+3. Home Assistant neu starten
+
+---
+
+## 🧩 Sensor
+
+Nach der Installation steht ein Sensor zur Verfügung:
+
+sensor.nrw_rail_status
+
+
+### Sensorattribute:
+
+- `line`
+- `category`
+- `description`
+- `start_time`
+- `end_time`
+- `last_update`
+
+---
+
+## 🗺 Beispiel Lovelace‑Karte
+
+```yaml
+type: entities
+title: NRW Rail Status
+entities:
+  - entity: sensor.nrw_rail_status
+
 HACS → Integrationen → Custom repositories
 
