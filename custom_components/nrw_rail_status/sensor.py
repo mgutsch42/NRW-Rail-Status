@@ -8,10 +8,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import (
-    DOMAIN,
-    SENSOR_NAME,
-)
+from .const import DOMAIN, SENSOR_NAME
 
 
 async def async_setup_entry(
@@ -41,7 +38,7 @@ class NRWRailStatusSensor(CoordinatorEntity, SensorEntity):
             return 0
 
         # Nur aktive Meldungen zählen
-        return sum(1 for m in data if m.active)
+        return sum(1 for m in data if getattr(m, "active", False))
 
     @property
     def extra_state_attributes(self) -> dict:
@@ -53,6 +50,7 @@ class NRWRailStatusSensor(CoordinatorEntity, SensorEntity):
         first = data[0]
 
         return {
+            "first_id": first.id,
             "first_title": first.title,
             "first_text": first.text,
             "first_start": f"{first.start_date} {first.start_time}",
@@ -60,7 +58,7 @@ class NRWRailStatusSensor(CoordinatorEntity, SensorEntity):
             "first_priority": first.priority,
             "first_comp": first.comp,
             "first_product": first.product,
-            "first_id": first.id,
+            "first_active": first.active,
 
             # komplette Liste aller Meldungen als Dictionaries
             "messages": [
