@@ -1,20 +1,19 @@
 {
-  "entity": {
-    "sensor": {
-      "nrw_rail_status_sensor": {
-        "name": "NRW Rail Status",
-        "state": {
-          "default": "Number of disruptions"
-        },
-        "attributes": {
-          "line": "Line",
-          "category": "Category",
-          "description": "Description",
-          "start": "Start",
-          "end": "End",
-          "last_update": "Last update"
-        }
+  "title": "NRW Rail Status",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Set up NRW Rail Status",
+        "description": "This integration displays current disruptions and messages from the NRW rail network."
       }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect to the API",
+      "unknown": "Unknown error"
+    },
+    "abort": {
+      "already_configured": "This integration is already configured."
     }
   }
 }
+
