@@ -1,34 +1,28 @@
 # NRW Rail Status – Home Assistant Integration
 
-Diese Integration zeigt aktuelle Störungen aus dem NRW‑Bahnnetz an.  
-Datenquelle: https://www.zuginfo.nrw/api/ris
+Diese Home‑Assistant‑Integration zeigt aktuelle Störungen und Meldungen aus dem NRW‑Bahnnetz an.  
+Die Daten stammen von der öffentlichen API von **Zuginfo.nrw**.
 
-## Installation (HACS)
+> **Hinweis: Diese Integration befindet sich aktuell in aktiver Entwicklung / Testphase.**  
+> Funktionen können sich ändern, es können Fehler auftreten und nicht alle Datenpunkte sind final.  
+> Rückmeldungen und Fehlerberichte sind ausdrücklich erwünscht.
 
-1. HACS → Integrationen → Custom repositories
-2. URL: `https://github.com/mgutsch42/nrw-rail-status`
-3. Typ: Integration
-4. Installieren
-5. Home Assistant neu starten
-6. Integration hinzufügen: *NRW Rail Status*
+---
 
-## Sensor
+## 🚆 Funktionsumfang
 
-Der Sensor liefert:
+- Abfrage der öffentlichen RIS‑API von https://www.zuginfo.nrw/api/ris  
+- Automatische Aktualisierung alle 60 Sekunden  
+- Sensor zeigt:
+  - **State:** Anzahl der aktuellen Störungen
+  - **Attribute:** Details zur *ersten* Störung
+  - **raw:** komplette JSON‑Liste aller Störungen (für Dashboards)
 
-- **State:** Anzahl der aktuellen Störungen
-- **Attribute (erste Störung):**
-  - `line`
-  - `category`
-  - `description`
-  - `start`
-  - `end`
-  - `last_update`
-- **raw:** komplette JSON‑Liste aller Störungen
+---
 
-## Beispiel Dashboard
+## 📦 Installation über HACS
 
-```yaml
-type: entities
-entities:
-  - sensor.nrw_rail_status_sensor
+1. HACS → **Integrationen**
+2. Rechts oben: **Custom repositories**
+3. URL eintragen:
+
