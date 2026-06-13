@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import logging
+from datetime import timedelta
+
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
@@ -15,6 +17,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
+    """Set up NRW Rail Status from a config entry."""
     session = async_get_clientsession(hass)
     api = NRWHimApi(session)
 
@@ -29,7 +32,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         _LOGGER,
         name="NRW Rail Status",
         update_method=async_update,
-        update_interval=entry.options.get("scan_interval", 60),
+        update_interval=timedelta(
+            seconds=entry.options.get("scan_interval", 60)
+        ),
     )
 
     await coordinator.async_config_entry_first_refresh()
@@ -42,7 +47,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
+    """Unload NRW Rail Status config entry."""
     unload_ok = await hass.config_entries.async_unload_platforms(entry, ["sensor"])
     if unload_ok:
-        hass.data[DOMAIN].pop("coordinator")
+        hass.data[DOMAIN].pop("coordinator", None)
     return unload_ok
