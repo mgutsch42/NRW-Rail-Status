@@ -2,49 +2,66 @@ title: NRW Rail Status
 icon: mdi:train
 cards:
 
+  # --- Übersicht ---
   - type: entities
     title: Übersicht
     entities:
       - entity: sensor.nrw_rail_status_sensor
         name: Anzahl der Störungen
 
+  # --- Statusanzeige ---
   - type: entity
     entity: sensor.nrw_rail_status_sensor
     name: Statusanzeige
     state_color: true
 
+  # --- Details zur ersten Störung ---
   - type: markdown
     title: Details zur ersten Störung
     content: |
-      {% set s = states('sensor.nrw_rail_status_sensor') %}
-      {% set a = state_attr('sensor.nrw_rail_status_sensor', 'description') %}
-      {% set l = state_attr('sensor.nrw_rail_status_sensor', 'line') %}
-      {% set c = state_attr('sensor.nrw_rail_status_sensor', 'category') %}
-      {% set st = state_attr('sensor.nrw_rail_status_sensor', 'start') %}
-      {% set e = state_attr('sensor.nrw_rail_status_sensor', 'end') %}
-      {% set u = state_attr('sensor.nrw_rail_status_sensor', 'last_update') %}
+      {% set s = states('sensor.nrw_rail_status_sensor') | int %}
+      {% set first = state_attr('sensor.nrw_rail_status_sensor', 'messages')[0] if s > 0 else None %}
 
       **Aktuelle Störungen:** {{ s }}
 
-      {% if s|int > 0 %}
-      **Linie:** {{ l }}
-      **Kategorie:** {{ c }}
-      **Beschreibung:** {{ a }}
-      **Beginn:** {{ st }}
-      **Ende:** {{ e }}
-      **Letzte Aktualisierung:** {{ u }}
+      {% if s > 0 %}
+      **Titel:** {{ first.title }}
+      
+      **Beschreibung:**  
+      {{ first.text }}
+
+      **Beginn:** {{ first.start }}  
+      **Ende:** {{ first.end }}
+
+      **Priorität:** {{ first.priority }}  
+      **Verbund:** {{ first.comp }}  
+      **Produkt:** {{ first.product }}  
+      **Meldungs-ID:** {{ first.id }}
       {% else %}
       Keine aktuellen Störungen gemeldet.
       {% endif %}
 
-  - type: conditional
-    conditions:
-      - entity: sensor.nrw_rail_status_sensor
-        state_not: "0"
-    card:
-      type: markdown
-      title: Alle Störungen (JSON-Rohdaten)
-      content: |
-        ```json
-        {{ state_attr('sensor.nrw_rail_status_sensor', 'raw') }}
-        ```
+  # --- Liste aller Störungen ---
+  - type: markdown
+    title: Alle Störungen
+    content: |
+      {% set msgs = state_attr('sensor.nrw_rail_status_sensor', 'messages') %}
+      {% if msgs %}
+      {% for m in msgs %}
+      ---
+      ### **{{ m.title }}**
+      **Beschreibung:**  
+      {{ m.text }}
+
+      **Beginn:** {{ m.start }}  
+      **Ende:** {{ m.end }}
+
+      **Priorität:** {{ m.priority }}  
+      **Verbund:** {{ m.comp }}  
+      **Produkt:** {{ m.product }}  
+      **ID:** {{ m.id }}
+
+      {% endfor %}
+      {% else %}
+      Keine Störungen vorhanden.
+      {% endif %}
