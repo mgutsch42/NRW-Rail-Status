@@ -30,17 +30,35 @@ class NRWRailStatusCoordinator(DataUpdateCoordinator):
             update_interval=timedelta(seconds=DEFAULT_UPDATE_INTERVAL),
         )
 
-        # KORREKTE Session aus Home Assistant
         session = aiohttp_client.async_get_clientsession(hass)
-
-        # API initialisieren
         self.api = NRWHimApi(session)
 
     async def _async_update_data(self):
-        """Fetch data from the API."""
+        """Fetch data from the API with retry and error handling."""
         try:
             messages = await self.api.fetch_messages()
+
+            # Prüfen, ob die API gültige Daten geliefert hat
+            if not messages:
+                raise UpdateFailed("API returned no messages (empty result).")
+
             return messages
 
+        except UpdateFailed:
+            raise
+
         except Exception as err:
-            raise UpdateFailed(f"Error fetching NRW HIM data: {err}") from err
+            # HAFAS-spezifische Fehler erkennen
+            err_str = str(err)
+
+            if "hammError" in err_str:
+                raise UpdateFailed("HAFAS returned hammError (invalid session or payload).")
+
+            if "svcResL" in err_str and "[]" in err_str:
+                raise UpdateFailed("HAFAS returned empty svcResL (invalid request).")
+
+            if "HCI" in err_str:
+                raise UpdateFailed(f"HAFAS internal error: {err_str}")
+
+            # Generischer Fehler
+            raise UpdateFailed(f"Unexpected error fetching NRW HIM data: {err_str}") from err
