@@ -1,78 +1,83 @@
-NRW Rail Status – Home Assistant Integration
-Diese Home‑Assistant‑Integration sollte aktuelle Störungen und Meldungen aus dem NRW‑Bahnnetz anzeigen.
-Die Daten stammten ursprünglich von der öffentlichen API von Zuginfo.nrw.
+# NRW Rail Status – Home Assistant Integration
 
-⚠️ Aktueller Hinweis (Juni 2026)
-Die bisher verwendete Datenquelle
-https://www.zuginfo.nrw/api/ris  
-liefert seit Kurzem dauerhaft den HTTP‑Status 404 – Not Found.
+Diese Home‑Assistant‑Integration sollte aktuelle Störungen und Meldungen aus dem NRW‑Bahnnetz anzeigen.  
+Die Daten stammten ursprünglich von der öffentlichen API von **Zuginfo.nrw**.
 
-Damit ist die API nicht mehr erreichbar und die Integration kann aktuell
-keine Störungsdaten laden. Die Einrichtung in Home Assistant schlägt deshalb mit einem Einrichtungsfehler fehl.
+---
+
+## ⚠️ Aktueller Hinweis (Juni 2026)
+
+Die bisher verwendete Datenquelle  
+**https://www.zuginfo.nrw/api/ris**  
+liefert seit Kurzem dauerhaft den HTTP‑Status **404 – Not Found**.
+
+Damit ist die API nicht mehr erreichbar und die Integration kann aktuell  
+**keine Störungsdaten laden**. Die Einrichtung in Home Assistant schlägt deshalb mit einem Einrichtungsfehler fehl.
 
 Die Integration selbst funktioniert technisch korrekt – die Ursache liegt ausschließlich in der nicht mehr verfügbaren API.
 
-Es wird derzeit geprüft, ob alternative Datenquellen (z. B. DB Transport REST API, NRW OpenData oder eine mögliche neue Zuginfo‑API) genutzt werden können.
+Es wird derzeit geprüft, ob alternative Datenquellen (z. B. DB Transport REST API, NRW OpenData oder eine mögliche neue Zuginfo‑API) genutzt werden können.  
 Sobald eine stabile Quelle verfügbar ist, wird die Integration entsprechend aktualisiert.
 
-🚆 Funktionsumfang (ursprüngliche Version)
-Abfrage der öffentlichen RIS‑API von Zuginfo.nrw
+---
 
-Automatische Aktualisierung alle 60 Sekunden
+## 🚆 Funktionsumfang (ursprüngliche Version)
 
-Sensor liefert:
+- Abfrage der öffentlichen RIS‑API von Zuginfo.nrw  
+- Automatische Aktualisierung alle 60 Sekunden  
+- Sensor liefert:
+  - **State:** Anzahl der aktuellen Störungen
+  - **Attribute:** Details zur *ersten* Störung
+  - **raw:** komplette JSON‑Liste aller Störungen (für Dashboards)
 
-State: Anzahl der aktuellen Störungen
+> Hinweis: Dieser Funktionsumfang ist derzeit nicht nutzbar, da die API nicht mehr erreichbar ist.
 
-Attribute: Details zur ersten Störung
+---
 
-raw: komplette JSON‑Liste aller Störungen (für Dashboards)
+## 📦 Installation über HACS
 
-Hinweis: Dieser Funktionsumfang ist derzeit nicht nutzbar, da die API nicht mehr erreichbar ist.
+1. HACS → **Integrationen**
+2. Rechts oben: **Custom repositories**
+3. Folgende URL eintragen:
 
-📦 Installation über HACS
-HACS → Integrationen
+   https://github.com/mgutsch42/nrw-rail-status
 
-Rechts oben: Custom repositories
+4. Typ: **Integration**
+5. Repository hinzufügen
+6. Integration installieren
+7. Home Assistant neu starten
+8. Integration hinzufügen: **NRW Rail Status**
 
-Folgende URL eintragen:
+> Hinweis: Die Einrichtung schlägt aktuell fehl, da die API nicht erreichbar ist.
 
-https://github.com/mgutsch42/nrw-rail-status
+---
 
-Typ: Integration
+## 🧩 Sensor‑Details (ursprüngliche Version)
 
-Repository hinzufügen
+### Sensor: `sensor.nrw_rail_status_sensor`
 
-Integration installieren
+**State:**  
+- Anzahl der aktuellen Störungen
 
-Home Assistant neu starten
+**Attribute (erste Störung):**
 
-Integration hinzufügen: NRW Rail Status
+| Attribut       | Bedeutung |
+|----------------|-----------|
+| `line`         | Linienbezeichnung |
+| `category`     | Kategorie der Störung |
+| `description`  | Beschreibung |
+| `start`        | Beginn |
+| `end`          | Ende (falls bekannt) |
+| `last_update`  | Zeitstempel der letzten Aktualisierung |
+| `raw`          | komplette JSON‑Liste aller Störungen |
 
-Hinweis: Die Einrichtung schlägt aktuell fehl, da die API nicht erreichbar ist.
+> Hinweis: Dieser Sensor wird aktuell nicht erzeugt, da die API nicht erreichbar ist.
 
-🧩 Sensor‑Details (ursprüngliche Version)
-Sensor: sensor.nrw_rail_status_sensor
-State:
+---
 
-Anzahl der aktuellen Störungen
+## 📊 Beispiel‑Dashboard (Lovelace)
 
-Attribute (erste Störung):
-
-Attribut	Bedeutung
-line	Linienbezeichnung
-category	Kategorie der Störung
-description	Beschreibung
-start	Beginn
-end	Ende (falls bekannt)
-last_update	Zeitstempel der letzten Aktualisierung
-raw	komplette JSON‑Liste aller Störungen
-
-
-Hinweis: Dieser Sensor wird aktuell nicht erzeugt, da die API nicht erreichbar ist.
-
-📊 Beispiel‑Dashboard (Lovelace)
-yaml
+```yaml
 title: NRW Rail Status
 icon: mdi:train
 cards:
@@ -119,5 +124,7 @@ cards:
     card:
       type: markdown
       title: Alle Störungen (JSON-Rohdaten)
-      content: 
+      content: |
+        ```json
+        {{ state_attr('sensor.nrw_rail_status_sensor', 'raw') }}
         ```
