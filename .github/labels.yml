@@ -1,0 +1,52 @@
+labels:
+  - name: bug
+    color: d73a4a
+    description: Fehler in der NRW Rail Status Integration
+
+  - name: blocked
+    color: b60205
+    description: Blockiert durch API, Serverfehler oder fehlende Datenquelle
+
+  - name: investigation
+    color: f9d0c4
+    description: Analyse erforderlich, Ursache unklar
+
+  - name: api
+    color: 1f6feb
+    description: Themen rund um API-Endpunkte und Datenabruf
+
+  - name: api research
+    color: 0ea5e9
+    description: Recherche zu neuen APIs oder Datenquellen
+
+  - name: data-source
+    color: 0db7ed
+    description: Externe Datenquellen wie VRR, NVR, NWL, DB
+
+  - name: help wanted
+    color: 0e8a16
+    description: Unterstützung durch Community erwünscht
+
+  - name: good first issue
+    color: a2eeef
+    description: Einsteigerfreundliche Aufgabe für neue Contributor
+
+  - name: discussion
+    color: 6e7781
+    description: Allgemeine Diskussion, Fragen oder Ideen
+
+  - name: enhancement
+    color: a371f7
+    description: Verbesserung oder Erweiterung der Integration
+
+  - name: feature request
+    color: 8a63d2
+    description: Nutzer wünscht neue Funktion
+
+  - name: documentation
+    color: fbca04
+    description: Dokumentation, README, Wiki, Beispiele
+
+  - name: maintenance
+    color: d4c5f9
+    description: Refactoring, Cleanup oder interne Arbeiten
