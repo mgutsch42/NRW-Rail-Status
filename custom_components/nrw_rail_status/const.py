@@ -3,7 +3,7 @@
 DOMAIN = "nrw_rail_status"
 
 # API endpoint for Zuginfo.nrw (öffentliche JSON-Daten)
-API_URL = "https://www.zuginfo.nrw/api/ris"
+API_URL = "https://www.zuginfo.nrw/api/ris?format=json"
 
 # Update-Intervall in Sekunden
 DEFAULT_UPDATE_INTERVAL = 60
