@@ -1,3 +1,42 @@
+"""API client for NRW Rail Status (Zuginfo.nrw / HAFAS HIM)."""
+
+from __future__ import annotations
+
+import aiohttp
+import logging
+import random
+import string
+import re
+from html import unescape
+
+BASE_URL = "https://zuginfo.nrw/him/HimSearch"
+_LOGGER = logging.getLogger(__name__)
+
+
+# ---------------------------------------------------------
+# Hilfsfunktionen
+# ---------------------------------------------------------
+
+def _random_request_id(length=8):
+    """Erzeugt eine zufällige Request-ID wie im Browser."""
+    return "".join(random.choices(string.ascii_letters + string.digits, k=length))
+
+
+def _html_to_markdown(html: str) -> str:
+    """Sehr einfache HTML→Markdown-Konvertierung."""
+    if not html:
+        return ""
+
+    text = unescape(html)
+    text = re.sub(r"<br\s*/?>", "\n", text)
+    text = re.sub(r"<[^>]+>", "", text)
+    return text.strip()
+
+
+# ---------------------------------------------------------
+# Datenmodell
+# ---------------------------------------------------------
+
 class NRWMessage:
     """Einzelne HIM-Meldung als Python-Objekt mit Referenzauflösung."""
 
@@ -38,12 +77,11 @@ class NRWMessage:
     # ---------------------------------------------------------
 
     def _resolve_locations(self):
-        """Löst alle Bahnhofsreferenzen aus locL auf."""
         locL = self.common.get("locL", [])
         result = []
 
         for edge in self._resolve_edges():
-            for loc_idx in [edge.get("fLocX"), edge.get("tLocX")]:
+            for loc_idx in [edge.get("from"), edge.get("to")]:
                 if loc_idx is not None and 0 <= loc_idx < len(locL):
                     loc = locL[loc_idx]
                     result.append({
@@ -57,7 +95,6 @@ class NRWMessage:
         return result
 
     def _resolve_products(self):
-        """Löst Linien/Produkte aus prodL auf."""
         prodL = self.common.get("prodL", [])
         result = []
 
@@ -74,7 +111,6 @@ class NRWMessage:
         return result
 
     def _resolve_edges(self):
-        """Löst Streckenabschnitte aus himMsgEdgeL auf."""
         edges = self.common.get("himMsgEdgeL", [])
         result = []
 
@@ -90,7 +126,6 @@ class NRWMessage:
         return result
 
     def _resolve_events(self):
-        """Löst Ereignisse aus himMsgEventL auf."""
         events = self.common.get("himMsgEventL", [])
         result = []
 
@@ -107,3 +142,52 @@ class NRWMessage:
 
     def __repr__(self):
         return f"<NRWMessage {self.id} {self.title}>"
+
+
+# ---------------------------------------------------------
+# API-Client
+# ---------------------------------------------------------
+
+class NRWHimApi:
+    """Client für die HAFAS-HIM-API von Zuginfo.nrw."""
+
+    def __init__(self, session: aiohttp.ClientSession):
+        self.session = session
+
+    async def fetch_messages(self):
+        """Ruft die HIM-Meldungen ab und gibt eine Liste von NRWMessage zurück."""
+
+        payload = {
+            "req": {
+                "ver": "1.24",
+                "lang": "de",
+                "auth": {"type": "AID", "aid": "hafas-nrw-app"},
+                "client": {"id": "NRW", "type": "WEB", "name": "webapp"},
+                "svcReqL": [{
+                    "req": {
+                        "himFltrL": [{"type": "PROD", "mode": "INC", "value": "0"}],
+                        "getEdges": True,
+                        "getEvents": True,
+                        "getProds": True,
+                        "getCats": True,
+                    },
+                    "meth": "HimSearch"
+                }],
+            },
+            "id": _random_request_id(),
+        }
+
+        async with self.session.post(BASE_URL, json=payload) as resp:
+            if resp.status != 200:
+                raise Exception(f"HAFAS returned HTTP {resp.status}")
+
+            data = await resp.json()
+
+        try:
+            svc = data["svcResL"][0]["res"]
+            raw_messages = svc.get("msgL", [])
+            common = svc.get("common", {})
+        except Exception as err:
+            raise Exception(f"Invalid HAFAS response: {err}")
+
+        return [NRWMessage(msg, common) for msg in raw_messages]
