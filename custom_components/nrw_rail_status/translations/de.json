@@ -14,23 +14,6 @@
     "abort": {
       "already_configured": "Diese Integration ist bereits eingerichtet."
     }
-  },
-  "entity": {
-    "sensor": {
-      "nrw_rail_status_sensor": {
-        "name": "NRW Zugstatus",
-        "state": {
-          "default": "Anzahl der Störungen"
-        },
-        "attributes": {
-          "line": "Linie",
-          "category": "Kategorie",
-          "description": "Beschreibung",
-          "start": "Beginn",
-          "end": "Ende",
-          "last_update": "Letzte Aktualisierung"
-        }
-      }
-    }
   }
 }
+
