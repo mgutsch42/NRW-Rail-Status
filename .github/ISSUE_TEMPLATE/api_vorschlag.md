@@ -2,7 +2,7 @@
 name: "API-Vorschlag / Datenquelle"
 about: "Schlage eine neue API oder Datenquelle für NRW-Störungsdaten vor"
 title: "[API] Vorschlag: "
-labels: ["api research", "help wanted"]
+labels: ["api research", "help wanted", "question", "discussion"]
 assignees: []
 ---
 
