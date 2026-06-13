@@ -1,5 +1,4 @@
 import aiohttp
-import asyncio
 import random
 import string
 from datetime import datetime
@@ -56,7 +55,6 @@ class NRWMessage:
         return f"<NRWMessage {self.id} {self.title}>"
 
 
-
 class NRWHimApi:
     """API-Klasse für Zuginfo.nrw HIM-Störungsdaten."""
 
@@ -66,17 +64,36 @@ class NRWHimApi:
     async def fetch_messages(self):
         """Holt alle HIM-Meldungen und gibt sie als NRWMessage-Liste zurück."""
 
-        params = {
-            "hciMethod": "HimSearch",
-            "hciVersion": "1.24",
-            "hciClientType": "WEB",
-            "hciClientVersion": "10107",
-            "aid": "23lkjh63l456oisplergn",
-            "requestId": _random_request_id(),
-            "rnd": str(int(datetime.now().timestamp() * 1000)),
+        payload = {
+            "svcReqL": [
+                {
+                    "req": {
+                        "him": {
+                            "mot": "ALL",
+                            "prod": "ALL",
+                            "region": "NRW"
+                        }
+                    },
+                    "meth": "HimSearch"
+                }
+            ],
+            "client": {
+                "id": "WEB",
+                "type": "WEB",
+                "name": "zuginfo-web",
+                "l": "de"
+            },
+            "ver": "1.24",
+            "auth": {
+                "aid": "23lkjh63l456oisplergn"
+            }
         }
 
-        async with self.session.get(BASE_URL, params=params) as resp:
+        headers = {
+            "Content-Type": "application/json"
+        }
+
+        async with self.session.post(BASE_URL, json=payload, headers=headers) as resp:
             if resp.status != 200:
                 raise RuntimeError(f"API returned status {resp.status}")
 
