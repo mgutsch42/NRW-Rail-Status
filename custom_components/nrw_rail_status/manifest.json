@@ -2,11 +2,11 @@
   "domain": "nrw_rail_status",
   "name": "NRW Rail Status",
   "version": "0.1.0",
-  "documentation": "https://github.com/mgutsch42/nrw-rai-status",
+  "documentation": "https://github.com/mgutsch42/nrw-rail-status",
   "issue_tracker": "https://github.com/mgutsch42/nrw-rail-status/issues",
   "requirements": [],
   "codeowners": ["@mgutsch42"],
   "iot_class": "cloud_polling",
-  "integration_type": "service",
+  "integration_type": "hub",
   "loggers": ["custom_components.nrw_rail_status"]
 }
