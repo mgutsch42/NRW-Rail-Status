@@ -12,12 +12,35 @@ Die bisher verwendete Datenquelle
 liefert seit Kurzem dauerhaft den HTTP‑Status **404 – Not Found**.
 
 Damit ist die API nicht mehr erreichbar und die Integration kann aktuell  
-**keine Störungsdaten laden**. Die Einrichtung in Home Assistant schlägt deshalb mit einem Einrichtungsfehler fehl.
+## 🤝 Mitmachen & API‑Alternativen gesucht
 
-Die Integration selbst funktioniert technisch korrekt – die Ursache liegt ausschließlich in der nicht mehr verfügbaren API.
+Da die bisherige Datenquelle (https://www.zuginfo.nrw/api/ris) nicht mehr verfügbar ist,
+suchen wir gemeinsam nach einer neuen, stabilen API für Störungs‑ und Betriebsinformationen
+im NRW‑Bahnnetz.
 
-Es wird derzeit geprüft, ob alternative Datenquellen (z. B. DB Transport REST API, NRW OpenData oder eine mögliche neue Zuginfo‑API) genutzt werden können.  
-Sobald eine stabile Quelle verfügbar ist, wird die Integration entsprechend aktualisiert.
+Wenn du Ideen, Hinweise oder API‑Vorschläge hast, bist du herzlich eingeladen,
+dich zu beteiligen!
+
+### 🔍 Gesucht werden insbesondere:
+- Vorschläge für **öffentliche oder dokumentierte APIs**  
+- Hinweise auf **NRW‑ oder DB‑Datenquellen**  
+- Links zu **OpenData‑Portalen**  
+- Beispiele für **GTFS‑RT‑Feeds**  
+- Eigene Recherchen zu **Zuginfo.nrw** oder möglichen Nachfolge‑APIs  
+- Erfahrungen mit der **DB Transport REST API** (transport.rest)
+
+### 🛠️ Aktueller Stand der Entwicklung
+Parallel wird bereits an einer möglichen Umstellung auf die  
+**DB Transport REST API** gearbeitet, um weiterhin Störungsdaten bereitstellen zu können.
+
+### 💬 Wie du mitmachen kannst
+- Erstelle ein **Issue** mit deinem Vorschlag  
+- Diskutiere mit in den **GitHub Discussions** (falls aktiviert)  
+- Öffne einen **Pull Request**, wenn du Code beitragen möchtest  
+- Teile Links, Dokumentationen oder API‑Beispiele
+
+Jede Unterstützung ist willkommen — gemeinsam finden wir eine Lösung!
+
 
 ---
 
