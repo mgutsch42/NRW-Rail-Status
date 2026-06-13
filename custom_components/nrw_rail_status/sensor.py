@@ -1,3 +1,39 @@
+   """Sensor platform for NRW Rail Status."""
+
+from __future__ import annotations
+
+from homeassistant.components.sensor import SensorEntity
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
+
+from .const import DOMAIN
+
+
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities):
+    """Set up the sensor from config entry."""
+    coordinator = hass.data[DOMAIN]["coordinator"]
+    async_add_entities([NRWRailStatusSensor(coordinator)], True)
+
+
+class NRWRailStatusSensor(CoordinatorEntity, SensorEntity):
+    """Sensor that exposes the number of active disruptions."""
+
+    _attr_name = "NRW Rail Status"
+    _attr_icon = "mdi:train"
+
+    def __init__(self, coordinator):
+        super().__init__(coordinator)
+        self._attr_unique_id = "nrw_rail_status_sensor"
+
+    @property
+    def state(self):
+        """Return number of active disruptions."""
+        data = self.coordinator.data
+        if not data:
+            return 0
+        return len([m for m in data if m.active])
+
     @property
     def extra_state_attributes(self) -> dict:
         """Return attributes for the first disruption and full list."""
