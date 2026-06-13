@@ -11,14 +11,7 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from .const import (
     DOMAIN,
     SENSOR_NAME,
-    ATTR_LINE,
-    ATTR_CATEGORY,
-    ATTR_DESCRIPTION,
-    ATTR_START,
-    ATTR_END,
-    ATTR_LAST_UPDATE,
 )
-from .coordinator import NRWRailStatusCoordinator
 
 
 async def async_setup_entry(
@@ -27,44 +20,61 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ):
     """Set up the sensor platform."""
-    coordinator: NRWRailStatusCoordinator = hass.data[DOMAIN]["coordinator"]
-
+    coordinator = hass.data[DOMAIN]["coordinator"]
     async_add_entities([NRWRailStatusSensor(coordinator, entry)], True)
 
 
-class NRWRailStatusSensor(CoordinatorEntity[NRWRailStatusCoordinator], SensorEntity):
+class NRWRailStatusSensor(CoordinatorEntity, SensorEntity):
     """Representation of the NRW Rail Status sensor."""
 
-    def __init__(self, coordinator: NRWRailStatusCoordinator, entry: ConfigEntry) -> None:
+    def __init__(self, coordinator, entry: ConfigEntry) -> None:
         """Initialize the sensor."""
         super().__init__(coordinator)
-        self._coordinator = coordinator
         self._attr_name = SENSOR_NAME
         self._attr_unique_id = f"{entry.entry_id}_nrw_rail_status"
 
     @property
-    def native_value(self) -> int | None:
+    def native_value(self) -> int:
         """Return the number of active disruptions."""
-        data = self._coordinator.data
+        data = self.coordinator.data
         if not data:
             return 0
-        return len(data)
+
+        # Nur aktive Meldungen zählen
+        return sum(1 for m in data if m.active)
 
     @property
-    def extra_state_attributes(self) -> dict[str, any]:
-        """Return attributes for the first disruption."""
-        data = self._coordinator.data
+    def extra_state_attributes(self) -> dict:
+        """Return attributes for the first disruption and full list."""
+        data = self.coordinator.data
         if not data:
             return {}
 
         first = data[0]
 
         return {
-            ATTR_LINE: first.get("line"),
-            ATTR_CATEGORY: first.get("category"),
-            ATTR_DESCRIPTION: first.get("description"),
-            ATTR_START: first.get("start"),
-            ATTR_END: first.get("end"),
-            ATTR_LAST_UPDATE: first.get("lastUpdate"),
-            "raw": data,
+            "first_title": first.title,
+            "first_text": first.text,
+            "first_start": f"{first.start_date} {first.start_time}",
+            "first_end": f"{first.end_date} {first.end_time}",
+            "first_priority": first.priority,
+            "first_comp": first.comp,
+            "first_product": first.product,
+            "first_id": first.id,
+
+            # komplette Liste aller Meldungen als Dictionaries
+            "messages": [
+                {
+                    "id": m.id,
+                    "title": m.title,
+                    "text": m.text,
+                    "start": f"{m.start_date} {m.start_time}",
+                    "end": f"{m.end_date} {m.end_time}",
+                    "priority": m.priority,
+                    "comp": m.comp,
+                    "product": m.product,
+                    "active": m.active,
+                }
+                for m in data
+            ],
         }
