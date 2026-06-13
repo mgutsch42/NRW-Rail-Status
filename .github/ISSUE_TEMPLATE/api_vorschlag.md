@@ -36,19 +36,5 @@ Bitte so konkret wie möglich:
 - Beispiel-Endpunkte:
 - Beispiel-Response (falls möglich):
 
+```json
 <JSON oder Beispiel-Response hier einfügen>
-
-
----
-
-## 🧪 Erste Einschätzung
-
-- Ist die API stabil erreichbar?
-- Gibt es Rate Limits?
-- Ist sie für Home Assistant geeignet?
-
----
-
-## 💬 Weitere Hinweise
-
-Alles, was sonst noch wichtig ist:
