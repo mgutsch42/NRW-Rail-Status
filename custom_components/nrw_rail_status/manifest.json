@@ -1,7 +1,7 @@
 {
   "domain": "nrw_rail_status",
   "name": "NRW Rail Status",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "documentation": "https://github.com/mgutsch42/nrw-rail-status",
   "issue_tracker": "https://github.com/mgutsch42/nrw-rail-status/issues",
   "requirements": [],
@@ -12,4 +12,3 @@
   "platforms": ["sensor"],
   "loggers": ["custom_components.nrw_rail_status"]
 }
-
