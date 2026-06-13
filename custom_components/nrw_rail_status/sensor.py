@@ -11,7 +11,6 @@ from .const import DOMAIN
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities):
-    """Set up the sensor from config entry."""
     coordinator = hass.data[DOMAIN]["coordinator"]
     async_add_entities([NRWRailStatusSensor(coordinator)], True)
 
@@ -28,7 +27,6 @@ class NRWRailStatusSensor(CoordinatorEntity, SensorEntity):
 
     @property
     def state(self):
-        """Return number of active disruptions."""
         data = self.coordinator.data
         if not data:
             return 0
@@ -36,7 +34,6 @@ class NRWRailStatusSensor(CoordinatorEntity, SensorEntity):
 
     @property
     def extra_state_attributes(self) -> dict:
-        """Return attributes for the first disruption and full list."""
         data = self.coordinator.data
         if not data:
             return {}
@@ -44,7 +41,6 @@ class NRWRailStatusSensor(CoordinatorEntity, SensorEntity):
         first = data[0]
 
         return {
-            # Basisdaten der ersten Meldung
             "first_id": first.id,
             "first_title": first.title,
             "first_text": first.text,
@@ -54,14 +50,10 @@ class NRWRailStatusSensor(CoordinatorEntity, SensorEntity):
             "first_comp": first.comp,
             "first_product": first.product,
             "first_active": first.active,
-
-            # Neue, aufgelöste Referenzen
             "first_locations": first.locations,
             "first_products": first.products,
             "first_edges": first.edges,
             "first_events": first.events,
-
-            # komplette Liste aller Meldungen als Dictionaries
             "messages": [
                 {
                     "id": m.id,
@@ -73,8 +65,6 @@ class NRWRailStatusSensor(CoordinatorEntity, SensorEntity):
                     "comp": m.comp,
                     "product": m.product,
                     "active": m.active,
-
-                    # neue Felder pro Meldung
                     "locations": m.locations,
                     "products": m.products,
                     "edges": m.edges,
