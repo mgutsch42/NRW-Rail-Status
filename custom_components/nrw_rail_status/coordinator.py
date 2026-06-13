@@ -2,9 +2,7 @@
 
 from __future__ import annotations
 
-import asyncio
 import logging
-import aiohttp
 from datetime import timedelta
 
 from homeassistant.core import HomeAssistant
@@ -13,13 +11,14 @@ from homeassistant.helpers.update_coordinator import (
     UpdateFailed,
 )
 
-from .const import DOMAIN, API_URL, DEFAULT_UPDATE_INTERVAL
+from .const import DOMAIN, DEFAULT_UPDATE_INTERVAL
+from .api import NRWHimApi
 
 _LOGGER = logging.getLogger(__name__)
 
 
 class NRWRailStatusCoordinator(DataUpdateCoordinator):
-    """Coordinator to fetch data from Zuginfo.nrw."""
+    """Coordinator to fetch HIM messages from Zuginfo.nrw."""
 
     def __init__(self, hass: HomeAssistant) -> None:
         """Initialize the coordinator."""
@@ -30,22 +29,14 @@ class NRWRailStatusCoordinator(DataUpdateCoordinator):
             update_interval=timedelta(seconds=DEFAULT_UPDATE_INTERVAL),
         )
 
-        self.session = aiohttp.ClientSession()
+        # Home Assistant stellt eine Session bereit → nutzen!
+        self.api = NRWHimApi(hass.helpers.aiohttp_client.async_get_clientsession())
 
     async def _async_update_data(self):
         """Fetch data from the API."""
         try:
-            async with self.session.get(API_URL, timeout=10) as response:
-                if response.status != 200:
-                    raise UpdateFailed(f"API returned status {response.status}")
-
-                return await response.json()
-
-        except asyncio.TimeoutError as err:
-            raise UpdateFailed("Timeout while fetching data") from err
-
-        except aiohttp.ClientError as err:
-            raise UpdateFailed(f"HTTP error: {err}") from err
+            messages = await self.api.fetch_messages()
+            return messages
 
         except Exception as err:
-            raise UpdateFailed(f"Unexpected error: {err}") from err
+            raise UpdateFailed(f"Error fetching NRW HIM data: {err}") from err
