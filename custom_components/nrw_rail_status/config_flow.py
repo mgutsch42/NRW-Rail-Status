@@ -8,7 +8,7 @@ from homeassistant import config_entries
 from .const import DOMAIN
 
 
-class NRWConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+class NrwRailStatusConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for NRW Rail Status."""
 
     VERSION = 1
