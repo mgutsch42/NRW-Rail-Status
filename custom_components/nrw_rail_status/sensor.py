@@ -11,6 +11,12 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from .const import (
     DOMAIN,
     SENSOR_NAME,
+    ATTR_LINE,
+    ATTR_CATEGORY,
+    ATTR_DESCRIPTION,
+    ATTR_START,
+    ATTR_END,
+    ATTR_LAST_UPDATE,
 )
 from .coordinator import NRWRailStatusCoordinator
 
@@ -21,41 +27,45 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ):
     """Set up the sensor platform."""
-    # Wir holen den Coordinator aus den Config-Einträgen (Best Practice für neuere HA-Versionen)
-    coordinator = hass.data[DOMAIN][entry.entry_id]["coordinator"]
+    # Coordinator aus hass.data holen (Best Practice)
+    coordinator: NRWRailStatusCoordinator = hass.data[DOMAIN]["coordinator"]
 
-    async_add_entities([NRWRailStatusSensor(coordinator)], True)
+    async_add_entities([NRWRailStatusSensor(coordinator, entry)], True)
 
 
 class NRWRailStatusSensor(CoordinatorEntity[NRWRailStatusCoordinator], SensorEntity):
     """Representation of the NRW Rail Status sensor."""
 
-    def __init__(self, coordinator: NRWRailStatusCoordinator) -> None:
+    def __init__(self, coordinator: NRWRailStatusCoordinator, entry: ConfigEntry) -> None:
         """Initialize the sensor."""
         super().__init__(coordinator)
         self._coordinator = coordinator
         self._attr_name = SENSOR_NAME
-        self._attr_unique_id = f"{coordinator.config_entry.entry_id}_status"
+        self._attr_unique_id = f"{entry.entry_id}_nrw_rail_status"
 
     @property
     def native_value(self) -> int | None:
         """Return the number of active disruptions."""
         data = self._coordinator.data
-        if data is None:
-            return None
-
-        # Der Zustand des Sensors ist die bloße Anzahl der aktuellen Störungen
+        if not data:
+            return 0
         return len(data)
 
     @property
     def extra_state_attributes(self) -> dict[str, any]:
-        """Return all disruptions as a list for the dashboard."""
+        """Return attributes for the first disruption."""
         data = self._coordinator.data
         if not data:
-            return {"disruptions": []}
+            return {}
 
-        # Wir übergeben die komplette Liste an das Attribut "disruptions"
-        # Jedes Element in dieser Liste ist ein Dictionary mit line, category, description etc.
+        first = data[0]
+
         return {
-            "disruptions": data
+            ATTR_LINE: first.get("line"),
+            ATTR_CATEGORY: first.get("category"),
+            ATTR_DESCRIPTION: first.get("description"),
+            ATTR_START: first.get("start"),
+            ATTR_END: first.get("end"),
+            ATTR_LAST_UPDATE: first.get("lastUpdate"),
+            "raw": data,  # Für dein Dashboard (JSON-Rohdaten)
         }
