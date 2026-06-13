@@ -19,24 +19,27 @@ cards:
   - type: markdown
     title: Details zur ersten Störung
     content: |
-      {% set s = states('sensor.nrw_rail_status_sensor') | int %}
-      {% set first = state_attr('sensor.nrw_rail_status_sensor', 'messages')[0] if s > 0 else None %}
+      {% set msgs = state_attr('sensor.nrw_rail_status_sensor', 'messages') %}
+      {% set count = states('sensor.nrw_rail_status_sensor') | int %}
 
-      **Aktuelle Störungen:** {{ s }}
+      **Aktuelle Störungen:** {{ count }}
 
-      {% if s > 0 %}
+      {% if msgs and msgs | length > 0 %}
+      {% set first = msgs[0] %}
+
       **Titel:** {{ first.title }}
-      
+
       **Beschreibung:**  
       {{ first.text }}
 
-      **Beginn:** {{ first.start }}  
-      **Ende:** {{ first.end }}
+      **Beginn:** {{ first.start_date }} {{ first.start_time }}  
+      **Ende:** {{ first.end_date }} {{ first.end_time }}
 
       **Priorität:** {{ first.priority }}  
       **Verbund:** {{ first.comp }}  
       **Produkt:** {{ first.product }}  
       **Meldungs-ID:** {{ first.id }}
+
       {% else %}
       Keine aktuellen Störungen gemeldet.
       {% endif %}
@@ -46,15 +49,17 @@ cards:
     title: Alle Störungen
     content: |
       {% set msgs = state_attr('sensor.nrw_rail_status_sensor', 'messages') %}
+
       {% if msgs %}
       {% for m in msgs %}
       ---
       ### **{{ m.title }}**
+
       **Beschreibung:**  
       {{ m.text }}
 
-      **Beginn:** {{ m.start }}  
-      **Ende:** {{ m.end }}
+      **Beginn:** {{ m.start_date }} {{ m.start_time }}  
+      **Ende:** {{ m.end_date }} {{ m.end_time }}
 
       **Priorität:** {{ m.priority }}  
       **Verbund:** {{ m.comp }}  
