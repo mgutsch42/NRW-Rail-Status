@@ -4,6 +4,7 @@ import string
 from datetime import datetime
 from html import unescape
 import re
+import logging
 
 
 BASE_URL = "https://www.zuginfo.nrw/gate/"
@@ -94,6 +95,9 @@ class NRWHimApi:
         }
 
         async with self.session.post(BASE_URL, json=payload, headers=headers) as resp:
+            raw_text = await resp.text()
+            logging.getLogger(__name__).warning("RAW API RESPONSE: %s", raw_text)
+
             if resp.status != 200:
                 raise RuntimeError(f"API returned status {resp.status}")
 
