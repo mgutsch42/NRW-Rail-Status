@@ -2,7 +2,7 @@
 name: "Bugreport"
 about: "Melde einen Fehler in der NRW Rail Status Integration"
 title: "[Bug] "
-labels: ["bug"]
+labels: ["bug", "investigation", "help wanted"]
 assignees: []
 ---
 
@@ -13,6 +13,7 @@ Beschreibe den Fehler so genau wie möglich:
 - Was ist passiert?
 - Was hast du erwartet?
 - Seit wann tritt der Fehler auf?
+- Tritt der Fehler dauerhaft oder sporadisch auf?
 
 ---
 
@@ -31,10 +32,11 @@ Bitte liste die Schritte auf, um den Fehler nachzustellen:
 
 Bitte gib folgende Informationen an:
 
-- Home Assistant Version:
-- Integration Version:
-- Installationsmethode: HACS / manuell
-- Betriebssystem (HAOS, Docker, Core, etc.):
+- **Home Assistant Version:**
+- **Integration Version:** (z. B. Commit‑Hash oder HACS‑Version)
+- **Installationsmethode:** HACS / manuell
+- **Betriebssystem:** HAOS / Docker / Core / venv
+- **Browser / App:** (falls UI‑Fehler)
 
 ---
 
@@ -43,4 +45,6 @@ Bitte gib folgende Informationen an:
 Falls vorhanden, bitte Logs einfügen:
 
 ```text
+<Logausgabe hier einfügen>
+
 <Logausgabe hier einfügen>
