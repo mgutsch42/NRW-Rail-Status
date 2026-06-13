@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import aiohttp
+from datetime import timedelta
 
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import (
@@ -26,10 +27,7 @@ class NRWRailStatusCoordinator(DataUpdateCoordinator):
             hass,
             _LOGGER,
             name=DOMAIN,
-            update_interval=hass.helpers.event.async_track_time_interval(
-                self._async_update_data,
-                DEFAULT_UPDATE_INTERVAL,
-            ),
+            update_interval=timedelta(seconds=DEFAULT_UPDATE_INTERVAL),
         )
 
         self.session = aiohttp.ClientSession()
@@ -41,8 +39,7 @@ class NRWRailStatusCoordinator(DataUpdateCoordinator):
                 if response.status != 200:
                     raise UpdateFailed(f"API returned status {response.status}")
 
-                data = await response.json()
-                return data
+                return await response.json()
 
         except asyncio.TimeoutError as err:
             raise UpdateFailed("Timeout while fetching data") from err
