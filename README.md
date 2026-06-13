@@ -38,7 +38,9 @@ Die Integration nutzt einen **Config‑Flow**, es ist keine YAML‑Konfiguration
 
 Nach der Einrichtung erscheint ein Sensor:
 
-sensor.nrw_rail_status_sensor
+  sensor.nrw_rail_status_sensor
+
+
 ---
 
 ## 🧠 Sensor‑Daten
@@ -125,3 +127,6 @@ cards:
       {% else %}
       Keine Störungen vorhanden.
       {% endif %}
+
+
+  
