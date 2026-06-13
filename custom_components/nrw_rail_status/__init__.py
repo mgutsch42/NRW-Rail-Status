@@ -22,6 +22,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN]["coordinator"] = coordinator
 
+    # 🔥 WICHTIG: Sensor-Plattform laden!
+    hass.config_entries.async_setup_platforms(entry, ["sensor"])
+
     return True
 
 
