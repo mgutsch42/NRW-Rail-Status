@@ -1,50 +1,11 @@
-import aiohttp
-import random
-import string
-from datetime import datetime
-from html import unescape
-import re
-import logging
-
-from .const import (
-    BASE_URL,
-    HAFAS_VERSION,
-    HAFAS_CLIENT_ID,
-    HAFAS_CLIENT_TYPE,
-    HAFAS_CLIENT_NAME,
-    HAFAS_CLIENT_LABEL,
-    HAFAS_CLIENT_VERSION,
-    HAFAS_AID,
-    HAFAS_EXT,
-    HAFAS_LANG,
-)
-
-
-_LOGGER = logging.getLogger(__name__)
-
-
-def _random_request_id(length=16):
-    return ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(length))
-
-
-def _html_to_markdown(text: str) -> str:
-    if not text:
-        return ""
-    text = unescape(text)
-    text = re.sub(r"<br\s*/?>", "\n", text)
-    text = re.sub(r"<b>(.*?)</b>", r"**\1**", text)
-    text = re.sub(r"<i>(.*?)</i>", r"*\1*", text)
-    text = re.sub(r"<.*?>", "", text)
-    return text.strip()
-
-
 class NRWMessage:
-    """Einzelne HIM-Meldung als Python-Objekt."""
+    """Einzelne HIM-Meldung als Python-Objekt mit Referenzauflösung."""
 
     def __init__(self, raw, common):
         self.raw = raw
         self.common = common
 
+        # Grunddaten
         self.id = raw.get("hid")
         self.title = raw.get("head")
         self.text_html = raw.get("text")
@@ -60,90 +21,89 @@ class NRWMessage:
         self.end_date = raw.get("eDate")
         self.end_time = raw.get("eTime")
 
+        # Referenzen
         self.category_refs = raw.get("catRefL", [])
         self.edge_refs = raw.get("edgeRefL", [])
         self.event_refs = raw.get("eventRefL", [])
         self.prod_refs = raw.get("affProdRefL", [])
 
+        # Aufgelöste Daten
+        self.locations = self._resolve_locations()
+        self.products = self._resolve_products()
+        self.edges = self._resolve_edges()
+        self.events = self._resolve_events()
+
+    # ---------------------------------------------------------
+    # Referenzauflösung
+    # ---------------------------------------------------------
+
+    def _resolve_locations(self):
+        """Löst alle Bahnhofsreferenzen aus locL auf."""
+        locL = self.common.get("locL", [])
+        result = []
+
+        for edge in self._resolve_edges():
+            for loc_idx in [edge.get("fLocX"), edge.get("tLocX")]:
+                if loc_idx is not None and 0 <= loc_idx < len(locL):
+                    loc = locL[loc_idx]
+                    result.append({
+                        "name": loc.get("name"),
+                        "id": loc.get("extId"),
+                        "type": loc.get("type"),
+                        "lat": loc.get("crd", {}).get("y"),
+                        "lon": loc.get("crd", {}).get("x"),
+                    })
+
+        return result
+
+    def _resolve_products(self):
+        """Löst Linien/Produkte aus prodL auf."""
+        prodL = self.common.get("prodL", [])
+        result = []
+
+        for idx in self.prod_refs:
+            if 0 <= idx < len(prodL):
+                prod = prodL[idx]
+                result.append({
+                    "name": prod.get("name"),
+                    "line": prod.get("line"),
+                    "number": prod.get("number"),
+                    "operator": prod.get("oprX"),
+                })
+
+        return result
+
+    def _resolve_edges(self):
+        """Löst Streckenabschnitte aus himMsgEdgeL auf."""
+        edges = self.common.get("himMsgEdgeL", [])
+        result = []
+
+        for idx in self.edge_refs:
+            if 0 <= idx < len(edges):
+                edge = edges[idx]
+                result.append({
+                    "from": edge.get("fLocX"),
+                    "to": edge.get("tLocX"),
+                    "dir": edge.get("dir"),
+                })
+
+        return result
+
+    def _resolve_events(self):
+        """Löst Ereignisse aus himMsgEventL auf."""
+        events = self.common.get("himMsgEventL", [])
+        result = []
+
+        for idx in self.event_refs:
+            if 0 <= idx < len(events):
+                ev = events[idx]
+                result.append({
+                    "type": ev.get("type"),
+                    "text": ev.get("txt"),
+                    "time": ev.get("t"),
+                })
+
+        return result
+
     def __repr__(self):
         return f"<NRWMessage {self.id} {self.title}>"
-
-
-class NRWHimApi:
-    """API-Klasse für Zuginfo.nrw HIM-Störungsdaten."""
-
-    def __init__(self, session: aiohttp.ClientSession):
-        self.session = session
-
-    async def fetch_messages(self):
-        """Holt alle HIM-Meldungen und gibt sie als NRWMessage-Liste zurück."""
-
-        request_id = _random_request_id()
-
-        url = (
-            f"{BASE_URL}"
-            f"?requestId={request_id}"
-            f"&hciMethod=HimSearch"
-            f"&hciVersion={HAFAS_VERSION}"
-            f"&hciClientType={HAFAS_CLIENT_TYPE}"
-            f"&hciClientVersion={HAFAS_CLIENT_VERSION}"
-            f"&aid={HAFAS_AID}"
-            f"&rnd={int(datetime.now().timestamp() * 1000)}"
-        )
-
-        payload = {
-            "id": request_id,
-            "ver": HAFAS_VERSION,
-            "lang": HAFAS_LANG,
-            "auth": {
-                "type": "AID",
-                "aid": HAFAS_AID
-            },
-            "client": {
-                "id": HAFAS_CLIENT_ID,
-                "type": HAFAS_CLIENT_TYPE,
-                "name": HAFAS_CLIENT_NAME,
-                "l": HAFAS_CLIENT_LABEL,
-                "v": HAFAS_CLIENT_VERSION
-            },
-            "ext": HAFAS_EXT,
-            "formatted": False,
-            "svcReqL": [
-                {
-                    "meth": "HimSearch",
-                    "req": {
-                        "him": {
-                            "mot": "ALL",
-                            "prod": "ALL",
-                            "region": "NRW"
-                        }
-                    }
-                }
-            ]
-        }
-
-        headers = {
-            "Content-Type": "application/json",
-            "Origin": "https://www.zuginfo.nrw",
-            "Referer": "https://www.zuginfo.nrw/",
-            "User-Agent": "Mozilla/5.0"
-        }
-
-        async with self.session.post(url, json=payload, headers=headers) as resp:
-            raw_text = await resp.text()
-            _LOGGER.debug("RAW API RESPONSE: %s", raw_text)
-
-            if resp.status != 200:
-                raise RuntimeError(f"API returned status {resp.status}")
-
-            data = await resp.json()
-
-        try:
-            res = data["svcResL"][0]["res"]
-        except (KeyError, IndexError):
-            raise RuntimeError("Unexpected API structure")
-
-        common = res.get("common", {})
-        msg_list = res.get("msgL", [])
-
-        return [NRWMessage(m, common) for m in msg_list]
