@@ -177,7 +177,19 @@ class NRWHimApi:
             "id": _random_request_id(),
         }
 
-        async with self.session.post(BASE_URL, json=payload) as resp:
+        async with self.session.post(
+            BASE_URL,
+            json=payload,
+            headers={
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+                "Accept": "application/json",
+                "Accept-Language": "de-DE,de;q=0.9",
+                "Origin": "https://www.zuginfo.nrw",
+                "Referer": "https://www.zuginfo.nrw/",
+                "Content-Type": "application/json",
+            },
+        ) as resp:
+
             if resp.status != 200:
                 raise Exception(f"HAFAS returned HTTP {resp.status}")
 
