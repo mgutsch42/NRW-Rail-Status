@@ -27,7 +27,6 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ):
     """Set up the sensor platform."""
-    # Coordinator aus hass.data holen (Best Practice)
     coordinator: NRWRailStatusCoordinator = hass.data[DOMAIN]["coordinator"]
 
     async_add_entities([NRWRailStatusSensor(coordinator, entry)], True)
@@ -67,5 +66,5 @@ class NRWRailStatusSensor(CoordinatorEntity[NRWRailStatusCoordinator], SensorEnt
             ATTR_START: first.get("start"),
             ATTR_END: first.get("end"),
             ATTR_LAST_UPDATE: first.get("lastUpdate"),
-            "raw": data,  # Für dein Dashboard (JSON-Rohdaten)
+            "raw": data,
         }
