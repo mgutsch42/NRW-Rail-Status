@@ -10,7 +10,7 @@ Die Integration ist vollständig lokal, benötigt keine Cloud‑Dienste und funk
 ## ✨ Features
 
 - Echtzeit‑Abruf der NRW‑HIM‑Meldungen (Störungen, Baustellen, Ausfälle)
-- Auflösung aller HAFAS‑Referenzen:
+- Vollständige Auflösung aller HAFAS‑Referenzen:
   - betroffene **Bahnhöfe**
   - betroffene **Linien / Produkte**
   - betroffene **Streckenabschnitte**
@@ -31,17 +31,18 @@ Die Integration ist vollständig lokal, benötigt keine Cloud‑Dienste und funk
 ## 📦 Installation (HACS)
 
 1. HACS öffnen  
-2. **Integrationen → Custom Repositories**
+2. **Integrationen → Custom Repositories**  
 3. Repository hinzufügen:
-    https://github.com/mgutsch42/nrw-rail-status
 
-Typ: **Integration**
+   https://github.com/mgutsch42/nrw-rail-status
+
+   Typ: **Integration**
 
 4. Integration installieren  
 5. Home Assistant neu starten  
 6. Integration hinzufügen:
 
-**Einstellungen → Geräte & Dienste → Integration hinzufügen → „NRW Rail Status“**
+   **Einstellungen → Geräte & Dienste → Integration hinzufügen → „NRW Rail Status“**
 
 ---
 
@@ -64,10 +65,13 @@ Die API‑Kommunikation erfolgt über `aiohttp` und ist vollständig asynchron.
 
 Der Sensor `sensor.nrw_rail_status_sensor` liefert:
 
-### **State**
+### State
+
 - Anzahl aktiver Störungen
 
-### **Attribute**
+### Attribute
+
+- `first_id`
 - `first_title`
 - `first_text`
 - `first_start`
@@ -75,29 +79,29 @@ Der Sensor `sensor.nrw_rail_status_sensor` liefert:
 - `first_priority`
 - `first_comp`
 - `first_product`
+- `first_active`
 - `first_locations`
 - `first_products`
 - `first_edges`
 - `first_events`
-- `messages` (Liste aller Meldungen)
+- `messages` (Liste aller Meldungen inkl. Referenzauflösungen)
 
 ---
 
 ## 📊 Beispiel‑Dashboard
 
-```yaml
-title: NRW Rail Status
-icon: mdi:train
+title: NRW Rail Status  
+icon: mdi:train  
 cards:
 
-  - type: entities
-    title: Übersicht
-    entities:
-      - entity: sensor.nrw_rail_status_sensor
-        name: Anzahl der Störungen
+  - type: entities  
+    title: Übersicht  
+    entities:  
+      - entity: sensor.nrw_rail_status_sensor  
+        name: Anzahl der Störungen  
 
-  - type: markdown
-    title: Details zur ersten Störung
+  - type: markdown  
+    title: Details zur ersten Störung  
     content: |
       {% set msgs = state_attr('sensor.nrw_rail_status_sensor', 'messages') %}
       {% if msgs %}
@@ -122,33 +126,41 @@ cards:
       Keine aktuellen Störungen.
       {% endif %}
 
-##🛠 Dateien & Architektur
+---
 
-custom_components/nrw_rail_status/
-│
-├── __init__.py          → Integration Setup
-├── api.py               → HAFAS‑API‑Client + NRWMessage
-├── coordinator.py       → UpdateCoordinator
-├── sensor.py            → Sensor‑Definition
-├── const.py             → Konstanten
-├── config_flow.py       → UI‑Konfiguration
-├── manifest.json        → HA‑Manifest
-└── translations/        → Lokalisierung
+## 🛠 Dateien & Architektur
 
-##🧪 Debugging
+custom_components/nrw_rail_status/  
+│  
+├── __init__.py          → Integration Setup  
+├── api.py               → HAFAS‑API‑Client + NRWMessage  
+├── coordinator.py       → UpdateCoordinator  
+├── sensor.py            → Sensor‑Definition  
+├── const.py             → Konstanten  
+├── config_flow.py       → UI‑Konfiguration  
+├── manifest.json        → HA‑Manifest  
+└── translations/        → Lokalisierung  
 
-logger:
-  default: warning
-  logs:
-    custom_components.nrw_rail_status: debug
+---
 
-##📄 Lizenz
+## 🧪 Debugging
+
+logger:  
+  default: warning  
+  logs:  
+    custom_components.nrw_rail_status: debug  
+
+---
+
+## 📄 Lizenz
 
 MIT License
 
-##❤️ Autor
-Martin Gutsch  
+---
+
+## ❤️ Autor
+
+**Martin Gutsch**  
 GitHub: https://github.com/mgutsch42
-
-5. Repository hinzufügen:
-
+**Martin Gutsch**  
+GitHub: https://github.com/mgutsch42
