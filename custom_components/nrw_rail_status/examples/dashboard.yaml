@@ -27,11 +27,11 @@ cards:
       **Aktuelle Störungen:** {{ s }}
 
       {% if s|int > 0 %}
-      **Linie:** {{ l }}  
-      **Kategorie:** {{ c }}  
-      **Beschreibung:** {{ a }}  
-      **Beginn:** {{ st }}  
-      **Ende:** {{ e }}  
+      **Linie:** {{ l }}
+      **Kategorie:** {{ c }}
+      **Beschreibung:** {{ a }}
+      **Beginn:** {{ st }}
+      **Ende:** {{ e }}
       **Letzte Aktualisierung:** {{ u }}
       {% else %}
       Keine aktuellen Störungen gemeldet.
