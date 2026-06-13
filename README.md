@@ -1,87 +1,22 @@
 # NRW Rail Status – Home Assistant Integration
 
-Diese Home‑Assistant‑Integration sollte aktuelle Störungen und Meldungen aus dem NRW‑Bahnnetz anzeigen.  
-Die Daten stammten ursprünglich von der öffentlichen API von **Zuginfo.nrw**.
+Diese Home‑Assistant‑Integration zeigt aktuelle Störungen, Baustellen und Meldungen aus dem NRW‑Bahnnetz an.  
+Die Daten stammen aus der offiziellen **Zuginfo.nrw‑HIM‑API** (HimSearch).
 
 ---
 
-## ⚠️ Aktueller Hinweis (Juni 2026)
+## 🚆 Funktionsumfang
 
-Die bisher verwendete Datenquelle  
-**https://www.zuginfo.nrw/api/ris**  
-liefert seit Kurzem dauerhaft den HTTP‑Status **404 – Not Found**.
-
-Damit ist die API nicht mehr erreichbar und die Integration kann aktuell  
-**keine Störungsdaten laden**. Die Einrichtung in Home Assistant schlägt deshalb mit einem Einrichtungsfehler fehl.
-
-Die Integration selbst funktioniert technisch korrekt – die Ursache liegt ausschließlich in der nicht mehr verfügbaren API.
-
-Es wird derzeit geprüft, ob alternative Datenquellen (z. B. DB Transport REST API, NRW OpenData oder eine mögliche neue Zuginfo‑API) genutzt werden können.  
-Sobald eine stabile Quelle verfügbar ist, wird die Integration entsprechend aktualisiert.
+- Live‑Abruf der NRW‑HIM‑API (HimSearch)
+- Anzeige der **aktuellen Anzahl von Störungen**
+- Detailinformationen zur **ersten Störung**
+- Vollständige Liste aller Meldungen (Titel, Text, Zeitraum, Priorität, Verbund)
+- Automatische Aktualisierung über einen Update‑Coordinator
+- 100% kompatibel mit Standard‑Home‑Assistant‑Karten
 
 ---
 
-## 🤝 Mitmachen & API‑Alternativen gesucht
-
-Da die ursprüngliche API nicht mehr existiert, suchen wir gemeinsam nach einer neuen, stabilen Datenquelle für Störungs‑ und Betriebsinformationen im NRW‑Bahnnetz.
-
-### 🔍 Gesucht werden insbesondere:
-- Vorschläge für **öffentliche oder dokumentierte APIs**  
-- Hinweise auf **NRW‑ oder DB‑Datenquellen**  
-- Links zu **OpenData‑Portalen**  
-- Beispiele für **GTFS‑RT‑Feeds**  
-- Recherchen zu einer möglichen neuen **Zuginfo‑API**  
-- Erfahrungen mit der **DB Transport REST API** (transport.rest)
-
-### 💬 Wie du mitmachen kannst
-- Erstelle ein **Issue** mit deinem Vorschlag  
-- Diskutiere mit in den **GitHub Discussions**  
-- Öffne einen **Pull Request**, wenn du Code beitragen möchtest  
-- Teile Links, Dokumentationen oder API‑Beispiele
-
-Jede Unterstützung ist willkommen — gemeinsam finden wir eine Lösung!
-
----
-
-## 🤝 Mitmachen
-
-Beiträge sind ausdrücklich willkommen!  
-Wenn du Ideen, API‑Vorschläge oder Fehler melden möchtest, findest du hier die passenden Einstiegspunkte:
-
-### 🔧 Contributing Guide
-Alle Informationen zur Mitarbeit findest du im  
-👉 [CONTRIBUTING.md](CONTRIBUTING.md)
-
-### 💬 Discussions
-Für offene Fragen, API‑Recherche, Ideen und Austausch:  
-👉 https://github.com/mgutsch42/nrw-rail-status/discussions
-
-### 📝 Issue‑Templates
-Für strukturierte Beiträge stehen dir folgende Vorlagen zur Verfügung:
-
-- API‑Vorschläge: automatisch über **New Issue → API‑Vorschlag / Datenquelle**
-- Bugreports: automatisch über **New Issue → Bugreport**
-
-Damit bleibt das Projekt übersichtlich und Mitwirkende finden sich schnell zurecht.
-
----
-
-## 🚆 Funktionsumfang (ursprüngliche Version)
-
-> Hinweis: Dieser Funktionsumfang ist derzeit nicht nutzbar, da die API nicht mehr erreichbar ist.
-
-- Abfrage der öffentlichen RIS‑API von Zuginfo.nrw  
-- Automatische Aktualisierung alle 60 Sekunden  
-- Sensor liefert:
-  - **State:** Anzahl der aktuellen Störungen
-  - **Attribute:** Details zur *ersten* Störung
-  - **raw:** komplette JSON‑Liste aller Störungen (für Dashboards)
-
----
-
-## 📦 Installation über HACS
-
-> Hinweis: Die Einrichtung schlägt aktuell fehl, da die API nicht erreichbar ist.
+## 📦 Installation über HACS (manuell)
 
 1. HACS → **Integrationen**
 2. Rechts oben: **Custom repositories**
@@ -97,30 +32,34 @@ Damit bleibt das Projekt übersichtlich und Mitwirkende finden sich schnell zure
 
 ---
 
-## 🧩 Sensor‑Details (ursprüngliche Version)
+## ⚙️ Konfiguration
 
-> Hinweis: Dieser Sensor wird aktuell nicht erzeugt, da die API nicht erreichbar ist.
+Die Integration nutzt einen **Config‑Flow**, es ist keine YAML‑Konfiguration notwendig.
 
-### Sensor: `sensor.nrw_rail_status_sensor`
+Nach der Einrichtung erscheint ein Sensor:
 
-**State:**  
-- Anzahl der aktuellen Störungen
+sensor.nrw_rail_status_sensor
+---
 
-**Attribute (erste Störung):**
+## 🧠 Sensor‑Daten
 
-| Attribut       | Bedeutung |
-|----------------|-----------|
-| `line`         | Linienbezeichnung |
-| `category`     | Kategorie der Störung |
-| `description`  | Beschreibung |
-| `start`        | Beginn |
-| `end`          | Ende (falls bekannt) |
-| `last_update`  | Zeitstempel der letzten Aktualisierung |
-| `raw`          | komplette JSON‑Liste aller Störungen |
+### **State**
+- Anzahl der aktiven Störungen
+
+### **Attribute**
+- `first_title` – Titel der ersten Meldung  
+- `first_text` – Beschreibung (Markdown)  
+- `first_start` – Startzeitpunkt  
+- `first_end` – Endzeitpunkt  
+- `first_priority` – Priorität  
+- `first_comp` – Verbund (z. B. VRR, NWL)  
+- `first_product` – Produktklasse  
+- `first_id` – Meldungs‑ID  
+- `messages` – Liste aller Meldungen als strukturierte Objekte
 
 ---
 
-## 📊 Beispiel‑Dashboard (Lovelace)
+## 📊 Beispiel‑Dashboard (Standard‑HA‑Karten)
 
 ```yaml
 title: NRW Rail Status
@@ -141,187 +80,48 @@ cards:
   - type: markdown
     title: Details zur ersten Störung
     content: |
-      {% set s = states('sensor.nrw_rail_status_sensor') %}
-      {% set a = state_attr('sensor.nrw_rail_status_sensor', 'description') %}
-      {% set l = state_attr('sensor.nrw_rail_status_sensor', 'line') %}
-      {% set c = state_attr('sensor.nrw_rail_status_sensor', 'category') %}
-      {% set st = state_attr('sensor.nrw_rail_status_sensor', 'start') %}
-      {% set e = state_attr('sensor.nrw_rail_status_sensor', 'end') %}
-      {% set u = state_attr('sensor.nrw_rail_status_sensor', 'last_update') %}
+      {% set s = states('sensor.nrw_rail_status_sensor') | int %}
+      {% set first = state_attr('sensor.nrw_rail_status_sensor', 'messages')[0] if s > 0 else None %}
 
       **Aktuelle Störungen:** {{ s }}
 
-      {% if s|int > 0 %}
-      **Linie:** {{ l }}
-      **Kategorie:** {{ c }}
-      **Beschreibung:** {{ a }}
-      **Beginn:** {{ st }}
-      **Ende:** {{ e }}
-      **Letzte Aktualisierung:** {{ u }}
+      {% if s > 0 %}
+      **Titel:** {{ first.title }}
+
+      **Beschreibung:**  
+      {{ first.text }}
+
+      **Beginn:** {{ first.start }}  
+      **Ende:** {{ first.end }}
+
+      **Priorität:** {{ first.priority }}  
+      **Verbund:** {{ first.comp }}  
+      **Produkt:** {{ first.product }}  
+      **Meldungs-ID:** {{ first.id }}
       {% else %}
       Keine aktuellen Störungen gemeldet.
       {% endif %}
-
-  - type: conditional
-    conditions:
-      - entity: sensor.nrw_rail_status_sensor
-        state_not: "0"
-    card:
-      type: markdown
-      title: Alle Störungen (JSON-Rohdaten)
-      content: |
-        ```json
-        {{ state_attr('sensor.nrw_rail_status_sensor', 'raw') }}
-        ```
-# NRW Rail Status – Home Assistant Integration
-
-Diese Home‑Assistant‑Integration sollte aktuelle Störungen und Meldungen aus dem NRW‑Bahnnetz anzeigen.  
-Die Daten stammten ursprünglich von der öffentlichen API von **Zuginfo.nrw**.
-
----
-
-## ⚠️ Aktueller Hinweis (Juni 2026)
-
-Die bisher verwendete Datenquelle  
-**https://www.zuginfo.nrw/api/ris**  
-liefert seit Kurzem dauerhaft den HTTP‑Status **404 – Not Found**.
-
-Damit ist die API nicht mehr erreichbar und die Integration kann aktuell  
-**keine Störungsdaten laden**. Die Einrichtung in Home Assistant schlägt deshalb mit einem Einrichtungsfehler fehl.
-
-Die Integration selbst funktioniert technisch korrekt – die Ursache liegt ausschließlich in der nicht mehr verfügbaren API.
-
-Es wird derzeit geprüft, ob alternative Datenquellen (z. B. DB Transport REST API, NRW OpenData oder eine mögliche neue Zuginfo‑API) genutzt werden können.  
-Sobald eine stabile Quelle verfügbar ist, wird die Integration entsprechend aktualisiert.
-
----
-
-## 🤝 Mitmachen & API‑Alternativen gesucht
-
-Da die ursprüngliche API nicht mehr existiert, suchen wir gemeinsam nach einer neuen, stabilen Datenquelle für Störungs‑ und Betriebsinformationen im NRW‑Bahnnetz.
-
-### 🔍 Gesucht werden insbesondere:
-- Vorschläge für **öffentliche oder dokumentierte APIs**  
-- Hinweise auf **NRW‑ oder DB‑Datenquellen**  
-- Links zu **OpenData‑Portalen**  
-- Beispiele für **GTFS‑RT‑Feeds**  
-- Recherchen zu einer möglichen neuen **Zuginfo‑API**  
-- Erfahrungen mit der **DB Transport REST API** (transport.rest)
-
-### 💬 Wie du mitmachen kannst
-- Erstelle ein **Issue** mit deinem Vorschlag  
-- Diskutiere mit in den **GitHub Discussions** (falls aktiviert)  
-- Öffne einen **Pull Request**, wenn du Code beitragen möchtest  
-- Teile Links, Dokumentationen oder API‑Beispiele
-
-Jede Unterstützung ist willkommen — gemeinsam finden wir eine Lösung!
-
----
-
-## 🚆 Funktionsumfang (ursprüngliche Version)
-
-> Hinweis: Dieser Funktionsumfang ist derzeit nicht nutzbar, da die API nicht mehr erreichbar ist.
-
-- Abfrage der öffentlichen RIS‑API von Zuginfo.nrw  
-- Automatische Aktualisierung alle 60 Sekunden  
-- Sensor liefert:
-  - **State:** Anzahl der aktuellen Störungen
-  - **Attribute:** Details zur *ersten* Störung
-  - **raw:** komplette JSON‑Liste aller Störungen (für Dashboards)
-
----
-
-## 📦 Installation über HACS
-
-> Hinweis: Die Einrichtung schlägt aktuell fehl, da die API nicht erreichbar ist.
-
-1. HACS → **Integrationen**
-2. Rechts oben: **Custom repositories**
-3. Folgende URL eintragen:
-
-   https://github.com/mgutsch42/nrw-rail-status
-
-4. Typ: **Integration**
-5. Repository hinzufügen
-6. Integration installieren
-7. Home Assistant neu starten
-8. Integration hinzufügen: **NRW Rail Status**
-
----
-
-## 🧩 Sensor‑Details (ursprüngliche Version)
-
-> Hinweis: Dieser Sensor wird aktuell nicht erzeugt, da die API nicht erreichbar ist.
-
-### Sensor: `sensor.nrw_rail_status_sensor`
-
-**State:**  
-- Anzahl der aktuellen Störungen
-
-**Attribute (erste Störung):**
-
-| Attribut       | Bedeutung |
-|----------------|-----------|
-| `line`         | Linienbezeichnung |
-| `category`     | Kategorie der Störung |
-| `description`  | Beschreibung |
-| `start`        | Beginn |
-| `end`          | Ende (falls bekannt) |
-| `last_update`  | Zeitstempel der letzten Aktualisierung |
-| `raw`          | komplette JSON‑Liste aller Störungen |
-
----
-
-## 📊 Beispiel‑Dashboard (Lovelace)
-
-```yaml
-title: NRW Rail Status
-icon: mdi:train
-cards:
-
-  - type: entities
-    title: Übersicht
-    entities:
-      - entity: sensor.nrw_rail_status_sensor
-        name: Anzahl der Störungen
-
-  - type: entity
-    entity: sensor.nrw_rail_status_sensor
-    name: Statusanzeige
-    state_color: true
 
   - type: markdown
-    title: Details zur ersten Störung
+    title: Alle Störungen
     content: |
-      {% set s = states('sensor.nrw_rail_status_sensor') %}
-      {% set a = state_attr('sensor.nrw_rail_status_sensor', 'description') %}
-      {% set l = state_attr('sensor.nrw_rail_status_sensor', 'line') %}
-      {% set c = state_attr('sensor.nrw_rail_status_sensor', 'category') %}
-      {% set st = state_attr('sensor.nrw_rail_status_sensor', 'start') %}
-      {% set e = state_attr('sensor.nrw_rail_status_sensor', 'end') %}
-      {% set u = state_attr('sensor.nrw_rail_status_sensor', 'last_update') %}
+      {% set msgs = state_attr('sensor.nrw_rail_status_sensor', 'messages') %}
+      {% if msgs %}
+      {% for m in msgs %}
+      ---
+      ### **{{ m.title }}**
+      **Beschreibung:**  
+      {{ m.text }}
 
-      **Aktuelle Störungen:** {{ s }}
+      **Beginn:** {{ m.start }}  
+      **Ende:** {{ m.end }}
 
-      {% if s|int > 0 %}
-      **Linie:** {{ l }}
-      **Kategorie:** {{ c }}
-      **Beschreibung:** {{ a }}
-      **Beginn:** {{ st }}
-      **Ende:** {{ e }}
-      **Letzte Aktualisierung:** {{ u }}
+      **Priorität:** {{ m.priority }}  
+      **Verbund:** {{ m.comp }}  
+      **Produkt:** {{ m.product }}  
+      **ID:** {{ m.id }}
+
+      {% endfor %}
       {% else %}
-      Keine aktuellen Störungen gemeldet.
+      Keine Störungen vorhanden.
       {% endif %}
-
-  - type: conditional
-    conditions:
-      - entity: sensor.nrw_rail_status_sensor
-        state_not: "0"
-    card:
-      type: markdown
-      title: Alle Störungen (JSON-Rohdaten)
-      content: |
-        ```json
-        {{ state_attr('sensor.nrw_rail_status_sensor', 'raw') }}
-        ```
