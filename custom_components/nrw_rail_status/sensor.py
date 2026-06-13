@@ -1,4 +1,4 @@
-   """Sensor platform for NRW Rail Status."""
+"""Sensor platform for NRW Rail Status."""
 
 from __future__ import annotations
 
