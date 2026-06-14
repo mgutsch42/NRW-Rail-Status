@@ -252,29 +252,21 @@ class NRWHimApi:
             url,   # <--- NEU: die URL aus Schritt 4
             json=payload,
             headers={
-                "User-Agent": "Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Mobile Safari/537.36",
-
-                "Accept": "*/*",
-                "Accept-Language": "de,de-DE;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
-                "Accept-Encoding": "gzip, deflate, br, zstd",
-
-                "Sec-CH-UA": "\"Microsoft Edge\";v=\"149\", \"Chromium\";v=\"149\", \"Not)A;Brand\";v=\"24\"",
-                "Sec-CH-UA-Mobile": "?1",
-                "Sec-CH-UA-Platform": "\"Android\"",
-
-                "Sec-Fetch-Dest": "empty",
-                "Sec-Fetch-Mode": "cors",
-                "Sec-Fetch-Site": "same-origin",
-
-                "Priority": "u=1, i",
-
-                "Origin": "https://www.zuginfo.nrw",
-                "Referer": "https://www.zuginfo.nrw/",
-
+                "User-Agent": (
+                    "Mozilla/5.0 (Linux; Android 15; Pixel 9) "
+                    "AppleWebKit/537.36 (KHTML, like Gecko) "
+                    "Chrome/149.0.0.0 Mobile Safari/537.36"
+                ),
+                "Accept": "application/json",
+                "Accept-Language": "de-DE,de;q=0.9,en;q=0.8",
                 "Content-Type": "application/json",
+                "Origin": "https://www.zuginfo.nrw",
+                "Referer": "https://www.zuginfo.nrw/webapp/",
             },
         ) as resp:
             raw_text = await resp.text()
+
+
 
         # Schritt 3b: Cookie-Debug nach POST
         _LOGGER.debug("RAW POST RESPONSE: %s", raw_text)
