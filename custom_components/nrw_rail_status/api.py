@@ -305,6 +305,10 @@ class NRWHimApi:
 
         common = svc.get("common", {})
         msgL = svc.get("himL", [])
+        if not isinstance(msgL, list):
+            _LOGGER.error("Erwarte Liste in 'himL', erhalten: %s", type(msgL))
+            _LOGGER.error("Antwort war: %s", raw_text)
+            return []
 
         # Schritt 6: NRWMessage-Objekte erzeugen
         messages = []
