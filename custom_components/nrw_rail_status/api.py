@@ -281,6 +281,7 @@ class NRWHimApi:
         _LOGGER.error("Cookies after POST: %s",
                       self.session.cookie_jar.filter_cookies(PRE_URL))
 
+
         # Wenn der Server HTML statt JSON liefert → Hinweis ausgeben
         if "html" in resp.headers.get("Content-Type", "").lower():
             _LOGGER.error("Server lieferte HTML statt JSON. Vermutlich fehlende Session.")
