@@ -10,8 +10,13 @@ import re
 from html import unescape
 
 BASE_URL = "https://zuginfo.nrw/him/HimSearch"
+PRE_URL = "https://www.zuginfo.nrw/"
 _LOGGER = logging.getLogger(__name__)
 
+
+# ---------------------------------------------------------
+# Hilfsfunktionen
+# ---------------------------------------------------------
 
 def _random_request_id(length=8):
     return "".join(random.choices(string.ascii_letters + string.digits, k=length))
@@ -26,9 +31,11 @@ def _html_to_markdown(html: str) -> str:
     return text.strip()
 
 
-class NRWMessage:
-    """Einzelne HIM-Meldung als Python-Objekt mit Referenzauflösung."""
+# ---------------------------------------------------------
+# Datenmodell
+# ---------------------------------------------------------
 
+class NRWMessage:
     def __init__(self, raw, common):
         self.raw = raw
         self.common = common
@@ -115,13 +122,31 @@ class NRWMessage:
         return result
 
 
+# ---------------------------------------------------------
+# API-Client
+# ---------------------------------------------------------
+
 class NRWHimApi:
     """Client für die HAFAS-HIM-API von Zuginfo.nrw."""
 
     def __init__(self, session: aiohttp.ClientSession):
         self.session = session
 
+    async def _prepare_session(self):
+        """Holt Cookies wie ein Browser."""
+        async with self.session.get(
+            PRE_URL,
+            headers={
+                "User-Agent": "Mozilla/5.0",
+                "Accept": "text/html",
+                "Connection": "keep-alive",
+            },
+        ) as resp:
+            _LOGGER.debug("Preload cookies: %s", resp.cookies)
+
     async def fetch_messages(self):
+        await self._prepare_session()
+
         payload = {
             "req": {
                 "ver": "1.24",
@@ -146,10 +171,8 @@ class NRWHimApi:
             BASE_URL,
             json=payload,
             headers={
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+                "User-Agent": "Mozilla/5.0",
                 "Accept": "application/json, text/plain, */*",
-                "Accept-Language": "de-DE,de;q=0.9",
-                "Accept-Encoding": "gzip, deflate, br",
                 "Origin": "https://www.zuginfo.nrw",
                 "Referer": "https://www.zuginfo.nrw/",
                 "Content-Type": "application/json",
@@ -160,6 +183,22 @@ class NRWHimApi:
                 "Connection": "keep-alive",
             },
         ) as resp:
+
+            # ---------------------------------------------------------
+            # DEBUG BLOCK – Schritt 1: HTML-Logging
+            # ---------------------------------------------------------
+            content_type = resp.headers.get("Content-Type", "")
+            if "html" in content_type.lower():
+                text = await resp.text()
+                _LOGGER.error(
+                    "NRW-HIM returned HTML instead of JSON. "
+                    "Status=%s Content-Type=%s First-500-chars=%s",
+                    resp.status,
+                    content_type,
+                    text[:500],
+                )
+                raise Exception("Server returned HTML instead of JSON")
+            # ---------------------------------------------------------
 
             if resp.status != 200:
                 raise Exception(f"HAFAS returned HTTP {resp.status}")
