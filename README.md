@@ -1,7 +1,7 @@
 # NRW Rail Status (Home Assistant Integration)
 
-Diese Home‑Assistant‑Integration zeigt **aktuelle Störungen, Baustellen und Meldungen** aus dem nordrhein‑westfälischen Bahnnetz an.  
-Die Daten stammen direkt aus **Zuginfo.nrw** und werden über die offizielle **HAFAS‑HIM‑Schnittstelle** abgerufen.
+Diese Home‑Assistant‑Integration zeigt aktuelle Störungen, Baustellen und Meldungen aus dem nordrhein‑westfälischen Bahnnetz an.  
+Die Daten stammen direkt aus Zuginfo.nrw und werden über die offizielle HAFAS‑HIM‑Schnittstelle abgerufen.
 
 Die Integration ist vollständig lokal, benötigt keine Cloud‑Dienste und funktioniert ohne API‑Key.
 
@@ -11,10 +11,10 @@ Die Integration ist vollständig lokal, benötigt keine Cloud‑Dienste und funk
 
 - Echtzeit‑Abruf der NRW‑HIM‑Meldungen (Störungen, Baustellen, Ausfälle)
 - Vollständige Auflösung aller HAFAS‑Referenzen:
-  - betroffene **Bahnhöfe**
-  - betroffene **Linien / Produkte**
-  - betroffene **Streckenabschnitte**
-  - zugehörige **Ereignisse**
+  - betroffene Bahnhöfe
+  - betroffene Linien / Produkte
+  - betroffene Streckenabschnitte
+  - zugehörige Ereignisse
 - Anzeige der wichtigsten Informationen:
   - Titel, Beschreibung, Zeitraum
   - Priorität, Verbund, Produkt
@@ -31,31 +31,31 @@ Die Integration ist vollständig lokal, benötigt keine Cloud‑Dienste und funk
 ## 📦 Installation (HACS)
 
 1. HACS öffnen  
-2. **Integrationen → Custom Repositories**  
+2. Integrationen → Custom Repositories  
 3. Repository hinzufügen:
 
    https://github.com/mgutsch42/nrw-rail-status  
-   Typ: **Integration**
+   Typ: Integration
 
 4. Integration installieren  
 5. Home Assistant neu starten  
 6. Integration hinzufügen:
 
-   **Einstellungen → Geräte & Dienste → Integration hinzufügen → „NRW Rail Status“**
+   Einstellungen → Geräte & Dienste → Integration hinzufügen → „NRW Rail Status“
 
 ---
 
 ## 🧠 Funktionsweise
 
-Die Integration nutzt die gleiche API wie die Webseite **Zuginfo.nrw**:
+Die Integration nutzt die gleiche API wie die Webseite Zuginfo.nrw:
 
-- HAFAS‑Version: `1.24`
-- Methode: `HimSearch`
-- Region: `NRW`
+- HAFAS‑Version: 1.24
+- Methode: HimSearch
+- Region: NRW
 - Client‑Emulation wie im Browser
 - Session‑ID pro Request
-- vollständige Referenzauflösung (`locL`, `prodL`, `edgeL`, `eventL`)
-- asynchrone Kommunikation über `aiohttp`
+- vollständige Referenzauflösung (locL, prodL, edgeL, eventL)
+- asynchrone Kommunikation über aiohttp
 
 Da die Zuginfo‑NRW‑Webseite mehrere Schutzmechanismen verwendet (Domain‑Trennung, Session‑Cookies, Header‑Fingerprinting), emuliert die Integration einen Browser‑ähnlichen Zugriff, um gültige Session‑Cookies zu erhalten.
 
@@ -63,7 +63,7 @@ Da die Zuginfo‑NRW‑Webseite mehrere Schutzmechanismen verwendet (Domain‑Tr
 
 ## 🧩 Sensor‑Datenstruktur
 
-Der Sensor `sensor.nrw_rail_status_sensor` liefert:
+Der Sensor sensor.nrw_rail_status_sensor liefert:
 
 ### State
 
@@ -71,76 +71,76 @@ Der Sensor `sensor.nrw_rail_status_sensor` liefert:
 
 ### Attribute
 
-- `first_id`
-- `first_title`
-- `first_text`
-- `first_start`
-- `first_end`
-- `first_priority`
-- `first_comp`
-- `first_product`
-- `first_active`
-- `first_locations`
-- `first_products`
-- `first_edges`
-- `first_events`
-- `messages` (Liste aller Meldungen inkl. Referenzauflösungen)
+- first_id
+- first_title
+- first_text
+- first_start
+- first_end
+- first_priority
+- first_comp
+- first_product
+- first_active
+- first_locations
+- first_products
+- first_edges
+- first_events
+- messages (Liste aller Meldungen inkl. Referenzauflösungen)
 
 ---
 
 ## 📊 Beispiel‑Dashboard
 
-```yaml
-title: NRW Rail Status
-icon: mdi:train
+title: NRW Rail Status  
+icon: mdi:train  
 cards:
 
-  - type: entities
-    title: Übersicht
-    entities:
-      - entity: sensor.nrw_rail_status_sensor
-        name: Anzahl der Störungen
+  - type: entities  
+    title: Übersicht  
+    entities:  
+      - entity: sensor.nrw_rail_status_sensor  
+        name: Anzahl der Störungen  
 
-  - type: markdown
-    title: Details zur ersten Störung
+  - type: markdown  
+    title: Details zur ersten Störung  
     content: |
       {% set msgs = state_attr('sensor.nrw_rail_status_sensor', 'messages') %}
       {% if msgs %}
       {% set first = msgs[0] %}
 
-      ### **{{ first.title }}**
+      ### {{ first.title }}
 
-      **Beschreibung:**  
+      Beschreibung:  
       {{ first.text }}
 
-      **Beginn:** {{ first.start_date }} {{ first.start_time }}  
-      **Ende:** {{ first.end_date }} {{ first.end_time }}
+      Beginn: {{ first.start_date }} {{ first.start_time }}  
+      Ende: {{ first.end_date }} {{ first.end_time }}
 
-      **Priorität:** {{ first.priority }}  
-      **Verbund:** {{ first.comp }}  
-      **Produkt:** {{ first.product }}
+      Priorität: {{ first.priority }}  
+      Verbund: {{ first.comp }}  
+      Produkt: {{ first.product }}
 
-      **Bahnhöfe:**  
+      Bahnhöfe:  
       {{ first.locations }}
 
       {% else %}
-
       Keine aktuellen Störungen.
       {% endif %}
+
 ---
 
 ## 🛠 Dateien & Architektur
 
-custom_components/nrw_rail_status/
-│
-├── init.py          → Integration Setup
-├── api.py               → HAFAS‑API‑Client + NRWMessage
-├── coordinator.py       → UpdateCoordinator
-├── sensor.py            → Sensor‑Definition
-├── const.py             → Konstanten
-├── config_flow.py       → UI‑Konfiguration
-├── manifest.json        → HA‑Manifest
-└── translations/        → Lokalisierung
+custom_components/nrw_rail_status/  
+│  
+├── __init__.py          → Integration Setup  
+├── api.py               → HAFAS‑API‑Client + NRWMessage  
+├── coordinator.py       → UpdateCoordinator  
+├── sensor.py            → Sensor‑Definition  
+├── const.py             → Konstanten  
+├── config_flow.py       → UI‑Konfiguration  
+├── manifest.json        → HA‑Manifest  
+└── translations/        → Lokalisierung  
+
 ---
 
 ## 🧪 Debugging & Entwicklungs‑Historie
@@ -148,11 +148,11 @@ custom_components/nrw_rail_status/
 Während der Entwicklung und Reverse‑Engineering‑Phase wurden mehrere technische Besonderheiten der Zuginfo‑NRW‑API identifiziert und behoben:
 
 ### ✔ Domain‑Konsistenz  
-Die API akzeptiert Session‑Cookies nur, wenn **alle Requests** dieselbe Domain verwenden.  
-Daher wurden alle `www.zuginfo.nrw`‑Einträge entfernt und auf `https://zuginfo.nrw/` vereinheitlicht.
+Die API akzeptiert Session‑Cookies nur, wenn alle Requests dieselbe Domain verwenden.  
+Daher wurden alle www.zuginfo.nrw‑Einträge entfernt und auf https://zuginfo.nrw/ vereinheitlicht.
 
 ### ✔ Korrektur der Basis‑URLs  
-Mehrere interne URLs (z. B. `/gate/`, `/webapp/`, `/him/HimSearch`) wurden bereinigt und auf die korrekte Domain umgestellt.
+Mehrere interne URLs (z. B. /gate/, /webapp/, /him/HimSearch) wurden bereinigt und auf die korrekte Domain umgestellt.
 
 ### ✔ Referer‑ und Origin‑Header  
 Die API verweigert Session‑Cookies, wenn Referer/Origin nicht exakt zur Domain passen.  
@@ -162,9 +162,9 @@ Alle Header wurden entsprechend korrigiert.
 Die Integration baut eine Browser‑ähnliche Session auf, um gültige Cookies zu erhalten.  
 Dies umfasst:
 
-- PRE‑Request auf `/webapp/`
+- PRE‑Request auf /webapp/
 - vollständige Header‑Emulation
-- Cookie‑Persistenz über `aiohttp`
+- Cookie‑Persistenz über aiohttp
 
 ### ✔ HTML‑Fallback‑Erkennung  
 Falls der Server statt JSON eine Login‑Seite liefert, erkennt die Integration dies automatisch und protokolliert:
@@ -185,5 +185,5 @@ MIT License
 
 ## ❤️ Autor
 
-**Martin Gutsch**  
+Martin Gutsch  
 GitHub: https://github.com/mgutsch42
