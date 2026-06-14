@@ -180,12 +180,10 @@ class NRWHimApi:
             "Referer": "https://www.zuginfo.nrw/",
         }
 
-        # *** GENAU HIER kommt der PRE-Request hin ***
+        # *** KORREKTER PRE-REQUEST ***
         async with self.session.get("https://www.zuginfo.nrw/webapp/", headers=headers) as resp:
             _LOGGER.debug("PRE_URL status: %s", resp.status)
 
-        async with self.session.get(PRE_URL, headers=headers) as resp:
-            _LOGGER.debug("PRE_URL status: %s", resp.status)
     async def fetch_messages(self):
         """Holt HIM-Meldungen von Zuginfo.nrw."""
 
