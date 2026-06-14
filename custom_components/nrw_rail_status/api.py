@@ -215,10 +215,46 @@ class NRWHimApi:
         _LOGGER.error("Cookies after PRE_URL: %s",
                       self.session.cookie_jar.filter_cookies(PRE_URL))
 
-    # Schritt 3: POST-Request an die HIM-API
         # Schritt 3: POST-Request an die HIM-API
+        async with self.session.post(
+            BASE_URL,
+            json=payload,
+            headers={
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                              "AppleWebKit/537.36 (KHTML, like Gecko) "
+                              "Chrome/124.0.6367.91 Safari/537.36",
+
+                "Accept": "application/json, text/plain, */*",
+                "Accept-Language": "de-DE,de;q=0.9,en-US;q=0.8,en;q=0.7",
+                "Accept-Encoding": "gzip, deflate, br, zstd",
+
+                "Sec-CH-UA": "\"Chromium\";v=\"124\", \"Not-A.Brand\";v=\"99\"",
+                "Sec-CH-UA-Mobile": "?0",
+                "Sec-CH-UA-Platform": "\"Windows\"",
+                "Sec-CH-UA-Platform-Version": "\"15.0.0\"",
+                "Sec-CH-UA-Arch": "\"x86\"",
+                "Sec-CH-UA-Bitness": "\"64\"",
+                "Sec-CH-UA-Full-Version": "\"124.0.6367.91\"",
+                "Sec-CH-UA-Full-Version-List":
+                    "\"Chromium\";v=\"124.0.6367.91\", \"Not-A.Brand\";v=\"99.0.0.0\"",
+
+                "Sec-Fetch-Site": "same-origin",
+                "Sec-Fetch-Mode": "cors",
+                "Sec-Fetch-Dest": "empty",
+
+                "Origin": "https://www.zuginfo.nrw",
+                "Referer": "https://www.zuginfo.nrw/",
+                "Connection": "keep-alive",
+                "Priority": "u=1, i",
+
+                "Content-Type": "application/json",
+                "X-Requested-With": "XMLHttpRequest",
+            },
+        ) as resp:
+            raw_text = await resp.text()
+            _LOGGER.debug("RAW POST RESPONSE: %s", raw_text)
+
         # Schritt 3b: Cookie-Debug nach POST
-       raw_text = await resp.text()
         _LOGGER.debug("RAW POST RESPONSE: %s", raw_text)
 
         # Schritt 3b: Cookie-Debug nach POST
