@@ -256,8 +256,6 @@ class NRWHimApi:
 
         # Schritt 3b: Cookie-Debug nach POST
         _LOGGER.debug("RAW POST RESPONSE: %s", raw_text)
-
-        # Schritt 3b: Cookie-Debug nach POST
         _LOGGER.error("Cookies after POST: %s",
                       self.session.cookie_jar.filter_cookies(BASE_URL))
 
