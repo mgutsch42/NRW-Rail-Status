@@ -291,7 +291,6 @@ class NRWHimApi:
         common = svc.get("common", {})
         msgL = svc.get("himL", [])
 
-
         # Schritt 6: NRWMessage-Objekte erzeugen
         messages = []
         for msg in msgL:
