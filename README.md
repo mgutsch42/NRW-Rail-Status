@@ -230,6 +230,5 @@ MIT License
 ---
 
 ## ❤️ Autor
-
 Martin Gutsch  
 GitHub: https://github.com/mgutsch42
