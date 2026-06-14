@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -9,8 +10,11 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DOMAIN
 
+_LOGGER = logging.getLogger(__name__)
+
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities):
+    """Set up the NRW Rail Status sensor."""
     coordinator = hass.data[DOMAIN]["coordinator"]
     async_add_entities([NRWRailStatusSensor(coordinator)], True)
 
@@ -20,27 +24,37 @@ class NRWRailStatusSensor(CoordinatorEntity, SensorEntity):
 
     _attr_name = "NRW Rail Status"
     _attr_icon = "mdi:train"
+    _attr_unique_id = "nrw_rail_status_sensor"
 
     def __init__(self, coordinator):
         super().__init__(coordinator)
-        self._attr_unique_id = "nrw_rail_status_sensor"
 
     @property
     def state(self):
+        """Return number of active disruptions."""
         data = self.coordinator.data
+
         if not data:
+            _LOGGER.debug("Sensor state: no data available, returning 0")
             return 0
-        return len([m for m in data if m.active])
+
+        active_count = len([m for m in data if m.active])
+        _LOGGER.debug("Sensor state: %s active disruptions", active_count)
+        return active_count
 
     @property
     def extra_state_attributes(self) -> dict:
+        """Return detailed attributes for the first disruption and full list."""
         data = self.coordinator.data
+
         if not data:
+            _LOGGER.debug("Sensor attributes: no data available")
             return {}
 
         first = data[0]
 
         return {
+            # Basisdaten der ersten Meldung
             "first_id": first.id,
             "first_title": first.title,
             "first_text": first.text,
@@ -50,10 +64,14 @@ class NRWRailStatusSensor(CoordinatorEntity, SensorEntity):
             "first_comp": first.comp,
             "first_product": first.product,
             "first_active": first.active,
+
+            # Aufgelöste Referenzen
             "first_locations": first.locations,
             "first_products": first.products,
             "first_edges": first.edges,
             "first_events": first.events,
+
+            # komplette Liste aller Meldungen
             "messages": [
                 {
                     "id": m.id,
