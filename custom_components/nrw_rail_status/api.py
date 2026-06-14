@@ -279,7 +279,7 @@ class NRWHimApi:
         # Schritt 3b: Cookie-Debug nach POST
         _LOGGER.debug("RAW POST RESPONSE: %s", raw_text)
         _LOGGER.error("Cookies after POST: %s",
-                      self.session.cookie_jar.filter_cookies(BASE_URL))
+                      self.session.cookie_jar.filter_cookies(PRE_URL))
 
         # Wenn der Server HTML statt JSON liefert → Hinweis ausgeben
         if "html" in resp.headers.get("Content-Type", "").lower():
