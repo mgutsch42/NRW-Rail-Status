@@ -235,6 +235,19 @@ class NRWHimApi:
                       self.session.cookie_jar.filter_cookies(PRE_URL))
 
         # Schritt 3: POST-Request an die HIM-API
+        rnd = random.randint(10**12, 10**13 - 1)
+
+        url = (
+            f"{BASE_URL}"
+            f"?requestId={request_id}"
+            f"&hciMethod=HimSearch"
+            f"&hciVersion=1.24"
+            f"&hciClientType=WEB"
+            f"&hciClientVersion=10107"
+            f"&aid=23lkjh63l456oisplergn"
+            f"&rnd={rnd}"
+        )
+
         async with self.session.post(
             url,   # <--- NEU: die URL aus Schritt 4
             json=payload,
