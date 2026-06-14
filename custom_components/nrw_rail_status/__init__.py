@@ -18,14 +18,20 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Set up NRW Rail Status from a config entry."""
+
+    _LOGGER.debug("Setting up NRW Rail Status integration")
+
     session = async_get_clientsession(hass)
     api = NRWHimApi(session)
 
     async def async_update():
         try:
-            return await api.fetch_messages()
+            data = await api.fetch_messages()
+            _LOGGER.debug("Fetched %s HIM messages", len(data) if data else 0)
+            return data
         except Exception as err:
-            raise UpdateFailed(f"Unexpected error fetching NRW HIM data: {err}")
+            _LOGGER.error("Error fetching NRW HIM data: %s", err)
+            raise UpdateFailed(f"Unexpected error fetching NRW HIM data: {err}") from err
 
     coordinator = DataUpdateCoordinator(
         hass,
@@ -48,7 +54,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Unload NRW Rail Status config entry."""
+
+    _LOGGER.debug("Unloading NRW Rail Status integration")
+
     unload_ok = await hass.config_entries.async_unload_platforms(entry, ["sensor"])
     if unload_ok:
         hass.data[DOMAIN].pop("coordinator", None)
+
     return unload_ok
