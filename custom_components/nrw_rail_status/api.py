@@ -253,7 +253,36 @@ class NRWHimApi:
             },
         ) as resp:
             raw_text = await resp.text()
+
             _LOGGER.debug("RAW POST RESPONSE: %s", raw_text)
+        # Schritt 4: JSON-Antwort parsen
+        try:
+            data = await resp.json(content_type=None)
+        except Exception as e:
+            _LOGGER.error("Konnte JSON nicht parsen: %s", e)
+            _LOGGER.error("Antwort war: %s", raw_text)
+            return []
+
+        # Schritt 5: Struktur prüfen
+        try:
+            svc = data["svcResL"][0]["res"]
+        except Exception as e:
+            _LOGGER.error("Unerwartete JSON-Struktur: %s", e)
+            _LOGGER.error("Antwort war: %s", raw_text)
+            return []
+
+        msgL = svc.get("msgL", [])
+        common = svc.get("common", {})
+
+        # Schritt 6: NRWMessage-Objekte erzeugen
+        messages = []
+        for msg in msgL:
+            try:
+                messages.append(NRWMessage(msg, common))
+            except Exception as e:
+                _LOGGER.error("Fehler beim Erstellen einer NRWMessage: %s", e)
+
+        return messages
 
     async with self.session.post(
         BASE_URL,
