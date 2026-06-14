@@ -71,19 +71,19 @@ Der Sensor sensor.nrw_rail_status_sensor liefert:
 
 ### Attribute
 
-- first_id
-- first_title
-- first_text
-- first_start
-- first_end
-- first_priority
-- first_comp
-- first_product
-- first_active
-- first_locations
-- first_products
-- first_edges
-- first_events
+- first_id  
+- first_title  
+- first_text  
+- first_start  
+- first_end  
+- first_priority  
+- first_comp  
+- first_product  
+- first_active  
+- first_locations  
+- first_products  
+- first_edges  
+- first_events  
 - messages (Liste aller Meldungen inkl. Referenzauflösungen)
 
 ---
@@ -162,9 +162,9 @@ Alle Header wurden entsprechend korrigiert.
 Die Integration baut eine Browser‑ähnliche Session auf, um gültige Cookies zu erhalten.  
 Dies umfasst:
 
-- PRE‑Request auf /webapp/
-- vollständige Header‑Emulation
-- Cookie‑Persistenz über aiohttp
+- PRE‑Request auf /webapp/  
+- vollständige Header‑Emulation  
+- Cookie‑Persistenz über aiohttp  
 
 ### ✔ HTML‑Fallback‑Erkennung  
 Falls der Server statt JSON eine Login‑Seite liefert, erkennt die Integration dies automatisch und protokolliert:
@@ -176,6 +176,7 @@ Falls der Server statt JSON eine Login‑Seite liefert, erkennt die Integration 
 Dies erleichtert das Debugging bei API‑Änderungen.
 
 ---
+
 ## ⚠️ Aktueller Status der Integration
 
 Diese Integration befindet sich derzeit in einem **experimentellen Zustand** und kann **keine funktionierenden Daten** von Zuginfo.nrw abrufen.
@@ -184,30 +185,31 @@ Diese Integration befindet sich derzeit in einem **experimentellen Zustand** und
 
 Die Webseite Zuginfo.nrw verwendet mehrere Schutzmechanismen, die eine automatisierte Abfrage verhindern:
 
-- strikte Domain‑Konsistenz (abweichende Domains → ungültige Session)
-- Session‑Cookies, die nur unter bestimmten Header‑Kombinationen gesetzt werden
-- Browser‑Fingerprinting (Header‑Validierung)
-- HTML‑Login‑Fallback, wenn die Session nicht akzeptiert wird
+- strikte Domain‑Konsistenz  
+- Session‑Cookies, die nur unter bestimmten Header‑Kombinationen gesetzt werden  
+- Browser‑Fingerprinting  
+- HTML‑Login‑Fallback bei ungültiger Session  
 
 Trotz vollständiger Nachbildung der bekannten Browser‑Header und korrekter Domain‑Konfiguration liefert der Server weiterhin:
 
-- **keine Session‑Cookies**
-- **HTML‑Login‑Seiten statt JSON‑Antworten**
-- **keine verwertbaren HIM‑Daten**
+- keine Session‑Cookies  
+- HTML‑Login‑Seiten statt JSON  
+- keine verwertbaren HIM‑Daten  
 
 ### Konsequenz
 
-Der Sensor `sensor.nrw_rail_status_sensor` zeigt daher aktuell:
+Der Sensor sensor.nrw_rail_status_sensor zeigt daher aktuell:
 
-- **0 Störungen**
-- **keine Meldungen**
-- **keine Daten aus der API**
+- 0 Störungen  
+- keine Meldungen  
+- keine Daten aus der API  
 
 ### Ziel
 
 Die Integration bleibt bestehen, bis eine stabile Möglichkeit gefunden wird, eine gültige Session aufzubauen oder Zuginfo.nrw die API‑Mechanik ändert.  
 Bis dahin dient das Projekt als technische Referenz und Dokumentation der HAFAS/HIM‑Struktur von Zuginfo.nrw.
 
+---
 
 ## 📄 Lizenz
 
