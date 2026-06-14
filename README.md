@@ -34,8 +34,7 @@ Die Integration ist vollständig lokal, benötigt keine Cloud‑Dienste und funk
 2. **Integrationen → Custom Repositories**  
 3. Repository hinzufügen:
 
-   https://github.com/mgutsch42/nrw-rail-status
-
+   https://github.com/mgutsch42/nrw-rail-status  
    Typ: **Integration**
 
 4. Integration installieren  
@@ -56,8 +55,9 @@ Die Integration nutzt die gleiche API wie die Webseite **Zuginfo.nrw**:
 - Client‑Emulation wie im Browser
 - Session‑ID pro Request
 - vollständige Referenzauflösung (`locL`, `prodL`, `edgeL`, `eventL`)
+- asynchrone Kommunikation über `aiohttp`
 
-Die API‑Kommunikation erfolgt über `aiohttp` und ist vollständig asynchron.
+Da die Zuginfo‑NRW‑Webseite mehrere Schutzmechanismen verwendet (Domain‑Trennung, Session‑Cookies, Header‑Fingerprinting), emuliert die Integration einen Browser‑ähnlichen Zugriff, um gültige Session‑Cookies zu erhalten.
 
 ---
 
@@ -90,18 +90,19 @@ Der Sensor `sensor.nrw_rail_status_sensor` liefert:
 
 ## 📊 Beispiel‑Dashboard
 
-title: NRW Rail Status  
-icon: mdi:train  
+```yaml
+title: NRW Rail Status
+icon: mdi:train
 cards:
 
-  - type: entities  
-    title: Übersicht  
-    entities:  
-      - entity: sensor.nrw_rail_status_sensor  
-        name: Anzahl der Störungen  
+  - type: entities
+    title: Übersicht
+    entities:
+      - entity: sensor.nrw_rail_status_sensor
+        name: Anzahl der Störungen
 
-  - type: markdown  
-    title: Details zur ersten Störung  
+  - type: markdown
+    title: Details zur ersten Störung
     content: |
       {% set msgs = state_attr('sensor.nrw_rail_status_sensor', 'messages') %}
       {% if msgs %}
@@ -123,32 +124,56 @@ cards:
       {{ first.locations }}
 
       {% else %}
+
       Keine aktuellen Störungen.
       {% endif %}
-
 ---
 
 ## 🛠 Dateien & Architektur
 
-custom_components/nrw_rail_status/  
-│  
-├── __init__.py          → Integration Setup  
-├── api.py               → HAFAS‑API‑Client + NRWMessage  
-├── coordinator.py       → UpdateCoordinator  
-├── sensor.py            → Sensor‑Definition  
-├── const.py             → Konstanten  
-├── config_flow.py       → UI‑Konfiguration  
-├── manifest.json        → HA‑Manifest  
-└── translations/        → Lokalisierung  
-
+custom_components/nrw_rail_status/
+│
+├── init.py          → Integration Setup
+├── api.py               → HAFAS‑API‑Client + NRWMessage
+├── coordinator.py       → UpdateCoordinator
+├── sensor.py            → Sensor‑Definition
+├── const.py             → Konstanten
+├── config_flow.py       → UI‑Konfiguration
+├── manifest.json        → HA‑Manifest
+└── translations/        → Lokalisierung
 ---
 
-## 🧪 Debugging
+## 🧪 Debugging & Entwicklungs‑Historie
 
-logger:  
-  default: warning  
-  logs:  
-    custom_components.nrw_rail_status: debug  
+Während der Entwicklung und Reverse‑Engineering‑Phase wurden mehrere technische Besonderheiten der Zuginfo‑NRW‑API identifiziert und behoben:
+
+### ✔ Domain‑Konsistenz  
+Die API akzeptiert Session‑Cookies nur, wenn **alle Requests** dieselbe Domain verwenden.  
+Daher wurden alle `www.zuginfo.nrw`‑Einträge entfernt und auf `https://zuginfo.nrw/` vereinheitlicht.
+
+### ✔ Korrektur der Basis‑URLs  
+Mehrere interne URLs (z. B. `/gate/`, `/webapp/`, `/him/HimSearch`) wurden bereinigt und auf die korrekte Domain umgestellt.
+
+### ✔ Referer‑ und Origin‑Header  
+Die API verweigert Session‑Cookies, wenn Referer/Origin nicht exakt zur Domain passen.  
+Alle Header wurden entsprechend korrigiert.
+
+### ✔ Session‑Handling  
+Die Integration baut eine Browser‑ähnliche Session auf, um gültige Cookies zu erhalten.  
+Dies umfasst:
+
+- PRE‑Request auf `/webapp/`
+- vollständige Header‑Emulation
+- Cookie‑Persistenz über `aiohttp`
+
+### ✔ HTML‑Fallback‑Erkennung  
+Falls der Server statt JSON eine Login‑Seite liefert, erkennt die Integration dies automatisch und protokolliert:
+
+- fehlende Cookies  
+- Content‑Type‑Mismatch  
+- HTML‑Snippet zur Analyse  
+
+Dies erleichtert das Debugging bei API‑Änderungen.
 
 ---
 
@@ -160,7 +185,5 @@ MIT License
 
 ## ❤️ Autor
 
-**Martin Gutsch**  
-GitHub: https://github.com/mgutsch42
 **Martin Gutsch**  
 GitHub: https://github.com/mgutsch42
