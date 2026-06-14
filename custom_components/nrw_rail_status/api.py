@@ -288,8 +288,8 @@ class NRWHimApi:
             _LOGGER.error("Antwort war: %s", raw_text)
             return []
 
-        msgL = svc.get("msgL", [])
-        common = svc.get("common", {})
+        msgL = svc.get("msgL", {})
+        common = svc.get("himL", [])
 
         # Schritt 6: NRWMessage-Objekte erzeugen
         messages = []
