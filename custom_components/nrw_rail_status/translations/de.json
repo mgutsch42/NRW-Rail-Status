@@ -3,11 +3,12 @@
     "step": {
       "user": {
         "title": "NRW Rail Status",
-        "description": "Diese Integration zeigt aktuelle HIM‑Störungen aus dem NRW‑Bahnnetz (Zuginfo.nrw / HAFAS HIM) an."
+        "description": "This integration displays current HIM disruptions from the NRW rail network (Zuginfo.nrw / HAFAS HIM)."
       }
     },
     "abort": {
-      "single_instance_allowed": "Diese Integration ist bereits eingerichtet."
+      "single_instance_allowed": "This integration is already configured."
     }
   }
 }
+
