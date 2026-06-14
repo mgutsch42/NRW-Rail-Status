@@ -177,7 +177,7 @@ class NRWHimApi:
 
             "Upgrade-Insecure-Requests": "1",
             "Connection": "keep-alive",
-            "Referer": "https://www.zuginfo.nrw/",
+            "Referer": "https://zuginfo.nrw/",
         }
 
         # *** KORREKTER PRE-REQUEST ***
