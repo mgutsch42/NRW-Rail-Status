@@ -186,24 +186,47 @@ class NRWHimApi:
 
         # Schritt 2: Request-Payload wie im Browser
         payload = {
-            "req": {
-                "ver": "1.24",
-                "lang": "de",
-                "auth": {"type": "AID", "aid": "hafas-nrw-app"},
-                "client": {"id": "NRW", "type": "WEB", "name": "webapp"},
-                "svcReqL": [{
-                    "req": {
-                        "himFltrL": [{"type": "PROD", "mode": "INC", "value": "0"}],
-                        "getEdges": True,
-                        "getEvents": True,
-                        "getProds": True,
-                        "getCats": True,
-                    },
-                    "meth": "HimSearch"
-                }],
+            "id": request_id,
+            "ver": "1.24",
+            "lang": "deu",
+            "auth": {
+                "type": "AID",
+                "aid": "23lkjh63l456oisplergn",
             },
-            "id": _random_request_id(),
+            "client": {
+                "id": "HAFAS",
+                "type": "WEB",
+                "name": "webapp",
+                "l": "vs_webapp",
+                "v": 10107,
+            },
+            "formatted": False,
+            "ext": "VRR.1",
+            "svcReqL": [
+                {
+                    "meth": "HimSearch",
+                    "req": {
+                        "maxNum": 500,
+                        "dateB": "20251214",
+                        "timeB": "000000",
+                        "dateE": "20261212",
+                        "timeE": "235959",
+                        "himFltrL": [
+                            {"type": "CH", "mode": "INC", "value": "MESSAGELIST_CUSTOMER"},
+                            {"type": "HIMCAT", "mode": "INC", "value": 0},
+                            {"type": "HIMCAT", "mode": "INC", "value": 4},
+                            {"type": "HIMCAT", "mode": "INC", "value": 2},
+                            {"type": "HIMCAT", "mode": "INC", "value": 3},
+                        ],
+                        "sortL": ["LMOD_DESC"],
+                        "getParent": True,
+                        "getChildren": True,
+                    },
+                    "id": "1|1|",
+                }
+            ],
         }
+
 
         # Cookie-Debug
         _LOGGER.error("Cookies after PRE_URL: %s",
