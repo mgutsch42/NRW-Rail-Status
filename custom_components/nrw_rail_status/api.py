@@ -10,7 +10,7 @@ import re
 from html import unescape
 
 BASE_URL = "https://zuginfo.nrw/him/HimSearch"
-PRE_URL = "https://www.zuginfo.nrw/"
+PRE_URL = "https://www.zuginfo.nrw/webapp/"
 _LOGGER = logging.getLogger(__name__)
 
 
