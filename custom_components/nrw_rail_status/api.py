@@ -7,7 +7,7 @@ import string
 import re
 from html import unescape
 
-BASE_URL = "https://www.zuginfo.nrw/gate"
+BASE_URL = "https://www.zuginfo.nrw/gate/"
 PRE_URL = "https://www.zuginfo.nrw/webapp/"
 
 _LOGGER = logging.getLogger(__name__)
