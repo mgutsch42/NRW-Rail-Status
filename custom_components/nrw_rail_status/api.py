@@ -165,7 +165,6 @@ class NRWHimApi:
             "Accept-Language": "de-DE,de;q=0.9,en-US;q=0.8,en;q=0.7",
             "Accept-Encoding": "gzip, deflate, br, zstd",
 
-            # Chrome Client Hints
             "Sec-CH-UA": "\"Chromium\";v=\"124\", \"Not-A.Brand\";v=\"99\"",
             "Sec-CH-UA-Mobile": "?0",
             "Sec-CH-UA-Platform": "\"Windows\"",
@@ -176,11 +175,14 @@ class NRWHimApi:
             "Sec-CH-UA-Full-Version-List":
                 "\"Chromium\";v=\"124.0.6367.91\", \"Not-A.Brand\";v=\"99.0.0.0\"",
 
-            # Chrome Navigation
             "Upgrade-Insecure-Requests": "1",
             "Connection": "keep-alive",
             "Referer": "https://www.zuginfo.nrw/",
         }
+
+        # *** GENAU HIER kommt der PRE-Request hin ***
+        async with self.session.get("https://www.zuginfo.nrw/webapp/", headers=headers) as resp:
+            _LOGGER.debug("PRE_URL status: %s", resp.status)
 
         async with self.session.get(PRE_URL, headers=headers) as resp:
             _LOGGER.debug("PRE_URL status: %s", resp.status)
