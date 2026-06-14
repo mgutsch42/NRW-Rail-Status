@@ -155,34 +155,28 @@ class NRWHimApi:
         """Lädt die Web-App wie ein Browser, um Session-Cookies zu erhalten."""
 
         headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                          "AppleWebKit/537.36 (KHTML, like Gecko) "
-                          "Chrome/124.0.6367.91 Safari/537.36",
-
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,"
-                      "image/avif,image/webp,image/apng,*/*;q=0.8",
-
-            "Accept-Language": "de-DE,de;q=0.9,en-US;q=0.8,en;q=0.7",
+            "User-Agent": "Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Mobile Safari/537.36",
+            "Accept": "*/*",
+            "Accept-Language": "de,de-DE;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
             "Accept-Encoding": "gzip, deflate, br, zstd",
 
-            "Sec-CH-UA": "\"Chromium\";v=\"124\", \"Not-A.Brand\";v=\"99\"",
-            "Sec-CH-UA-Mobile": "?0",
-            "Sec-CH-UA-Platform": "\"Windows\"",
-            "Sec-CH-UA-Platform-Version": "\"15.0.0\"",
-            "Sec-CH-UA-Arch": "\"x86\"",
-            "Sec-CH-UA-Bitness": "\"64\"",
-            "Sec-CH-UA-Full-Version": "\"124.0.6367.91\"",
-            "Sec-CH-UA-Full-Version-List":
-                "\"Chromium\";v=\"124.0.6367.91\", \"Not-A.Brand\";v=\"99.0.0.0\"",
+            "Sec-CH-UA": "\"Microsoft Edge\";v=\"149\", \"Chromium\";v=\"149\", \"Not)A;Brand\";v=\"24\"",
+            "Sec-CH-UA-Mobile": "?1",
+            "Sec-CH-UA-Platform": "\"Android\"",
 
-            "Upgrade-Insecure-Requests": "1",
-            "Connection": "keep-alive",
+            "Sec-Fetch-Dest": "empty",
+            "Sec-Fetch-Mode": "cors",
+            "Sec-Fetch-Site": "same-origin",
+
+            "Priority": "u=1, i",
+
+            "Origin": "https://www.zuginfo.nrw",
             "Referer": "https://www.zuginfo.nrw/",
         }
 
-        # *** KORREKTER PRE-REQUEST ***
-        async with self.session.get("https://zuginfo.nrw/webapp/", headers=headers) as resp:
+        async with self.session.get(PRE_URL, headers=headers) as resp:
             _LOGGER.debug("PRE_URL status: %s", resp.status)
+
 
     async def fetch_messages(self):
         """Holt HIM-Meldungen von Zuginfo.nrw."""
