@@ -242,8 +242,8 @@ class NRWHimApi:
                 "Sec-Fetch-Mode": "cors",
                 "Sec-Fetch-Dest": "empty",
 
-                "Origin": "https://www.zuginfo.nrw",
-                "Referer": "https://www.zuginfo.nrw/",
+                "Origin": "https://zuginfo.nrw",
+                "Referer": "https://zuginfo.nrw/",
                 "Connection": "keep-alive",
                 "Priority": "u=1, i",
 
