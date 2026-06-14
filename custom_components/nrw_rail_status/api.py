@@ -7,8 +7,8 @@ import string
 import re
 from html import unescape
 
-BASE_URL = "https://zuginfo.nrw/him/HimSearch"
-PRE_URL = "https://zuginfo.nrw/webapp/"
+BASE_URL = "https://www.zuginfo.nrw/him/HimSearch"
+PRE_URL = "https://www.zuginfo.nrw/webapp/"
 
 _LOGGER = logging.getLogger(__name__)
 # ---------------------------------------------------------
@@ -177,7 +177,7 @@ class NRWHimApi:
 
             "Upgrade-Insecure-Requests": "1",
             "Connection": "keep-alive",
-            "Referer": "https://zuginfo.nrw/",
+            "Referer": "https://www.zuginfo.nrw/",
         }
 
         # *** KORREKTER PRE-REQUEST ***
@@ -242,8 +242,8 @@ class NRWHimApi:
                 "Sec-Fetch-Mode": "cors",
                 "Sec-Fetch-Dest": "empty",
 
-                "Origin": "https://zuginfo.nrw",
-                "Referer": "https://zuginfo.nrw/",
+                "Origin": "https://www.zuginfo.nrw",
+                "Referer": "https://www.zuginfo.nrw/",
                 "Connection": "keep-alive",
                 "Priority": "u=1, i",
 
