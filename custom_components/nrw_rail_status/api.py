@@ -185,6 +185,8 @@ class NRWHimApi:
         await self._prepare_session()
 
         # Schritt 2: Request-Payload wie im Browser
+        request_id = _random_request_id()
+
         payload = {
             "id": request_id,
             "ver": "1.24",
