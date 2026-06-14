@@ -1,15 +1,10 @@
 {
-  "title": "NRW Zugstatus",
   "config": {
     "step": {
       "user": {
-        "title": "NRW Zugstatus einrichten",
-        "description": "Diese Integration zeigt aktuelle Störungen und Meldungen aus dem NRW‑Bahnnetz (Zuginfo.nrw / HAFAS HIM) an."
+        "title": "NRW Rail Status",
+        "description": "Diese Integration zeigt aktuelle HIM‑Störungen aus dem NRW‑Bahnnetz (Zuginfo.nrw / HAFAS HIM) an."
       }
-    },
-    "error": {
-      "cannot_connect": "Verbindung zur API fehlgeschlagen.",
-      "unknown": "Unbekannter Fehler."
     },
     "abort": {
       "single_instance_allowed": "Diese Integration ist bereits eingerichtet."
