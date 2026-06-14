@@ -176,6 +176,38 @@ Falls der Server statt JSON eine Login‑Seite liefert, erkennt die Integration 
 Dies erleichtert das Debugging bei API‑Änderungen.
 
 ---
+## ⚠️ Aktueller Status der Integration
+
+Diese Integration befindet sich derzeit in einem **experimentellen Zustand** und kann **keine funktionierenden Daten** von Zuginfo.nrw abrufen.
+
+### Hintergrund
+
+Die Webseite Zuginfo.nrw verwendet mehrere Schutzmechanismen, die eine automatisierte Abfrage verhindern:
+
+- strikte Domain‑Konsistenz (abweichende Domains → ungültige Session)
+- Session‑Cookies, die nur unter bestimmten Header‑Kombinationen gesetzt werden
+- Browser‑Fingerprinting (Header‑Validierung)
+- HTML‑Login‑Fallback, wenn die Session nicht akzeptiert wird
+
+Trotz vollständiger Nachbildung der bekannten Browser‑Header und korrekter Domain‑Konfiguration liefert der Server weiterhin:
+
+- **keine Session‑Cookies**
+- **HTML‑Login‑Seiten statt JSON‑Antworten**
+- **keine verwertbaren HIM‑Daten**
+
+### Konsequenz
+
+Der Sensor `sensor.nrw_rail_status_sensor` zeigt daher aktuell:
+
+- **0 Störungen**
+- **keine Meldungen**
+- **keine Daten aus der API**
+
+### Ziel
+
+Die Integration bleibt bestehen, bis eine stabile Möglichkeit gefunden wird, eine gültige Session aufzubauen oder Zuginfo.nrw die API‑Mechanik ändert.  
+Bis dahin dient das Projekt als technische Referenz und Dokumentation der HAFAS/HIM‑Struktur von Zuginfo.nrw.
+
 
 ## 📄 Lizenz
 
