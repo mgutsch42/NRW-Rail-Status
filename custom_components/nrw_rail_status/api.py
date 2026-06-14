@@ -184,6 +184,32 @@ class NRWHimApi:
 
         async with self.session.get(PRE_URL, headers=headers) as resp:
             _LOGGER.debug("PRE_URL status: %s", resp.status)
+    async def fetch_messages(self):
+        """Holt HIM-Meldungen von Zuginfo.nrw."""
+
+        # Schritt 1: PRE-Request (Cookies holen)
+        await self._prepare_session()
+
+        # Schritt 2: Request-Payload wie im Browser
+        payload = {
+            "req": {
+                "ver": "1.24",
+                "lang": "de",
+                "auth": {"type": "AID", "aid": "hafas-nrw-app"},
+                "client": {"id": "NRW", "type": "WEB", "name": "webapp"},
+                "svcReqL": [{
+                    "req": {
+                        "himFltrL": [{"type": "PROD", "mode": "INC", "value": "0"}],
+                        "getEdges": True,
+                        "getEvents": True,
+                        "getProds": True,
+                        "getCats": True,
+                    },
+                    "meth": "HimSearch"
+                }],
+            },
+            "id": _random_request_id(),
+        }
 
         # Cookie-Debug
         _LOGGER.error("Cookies after PRE_URL: %s",
