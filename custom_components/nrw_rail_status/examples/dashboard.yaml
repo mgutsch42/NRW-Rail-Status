@@ -27,13 +27,13 @@ cards:
       {% if msgs and msgs | length > 0 %}
       {% set first = msgs[0] %}
 
-      **Titel:** {{ first.title }}
+      ### **{{ first.title }}**
 
       **Beschreibung:**  
       {{ first.text }}
 
-      **Beginn:** {{ first.start_date }} {{ first.start_time }}  
-      **Ende:** {{ first.end_date }} {{ first.end_time }}
+      **Beginn:** {{ first.start }}  
+      **Ende:** {{ first.end }}
 
       **Priorität:** {{ first.priority }}  
       **Verbund:** {{ first.comp }}  
@@ -58,8 +58,8 @@ cards:
       **Beschreibung:**  
       {{ m.text }}
 
-      **Beginn:** {{ m.start_date }} {{ m.start_time }}  
-      **Ende:** {{ m.end_date }} {{ m.end_time }}
+      **Beginn:** {{ m.start }}  
+      **Ende:** {{ m.end }}
 
       **Priorität:** {{ m.priority }}  
       **Verbund:** {{ m.comp }}  
