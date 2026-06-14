@@ -10,7 +10,7 @@ import re
 from html import unescape
 
 BASE_URL = "https://zuginfo.nrw/him/HimSearch"
-PRE_URL = "https://www.zuginfo.nrw/app/"
+PRE_URL = "https://www.zuginfo.nrw/app/"   # <- aktuelle PRE_URL
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -144,6 +144,10 @@ class NRWHimApi:
         ) as resp:
             _LOGGER.debug("Preload cookies: %s", resp.cookies)
 
+        # --- DEBUG: Cookies nach PRE_URL ---
+        _LOGGER.error("Cookies after PRE_URL: %s",
+                      self.session.cookie_jar.filter_cookies(PRE_URL))
+
     async def fetch_messages(self):
         await self._prepare_session()
 
@@ -184,9 +188,11 @@ class NRWHimApi:
             },
         ) as resp:
 
-            # ---------------------------------------------------------
-            # DEBUG BLOCK – Schritt 1: HTML-Logging
-            # ---------------------------------------------------------
+            # --- DEBUG: Cookies nach POST ---
+            _LOGGER.error("Cookies after POST: %s",
+                          self.session.cookie_jar.filter_cookies(BASE_URL))
+
+            # --- DEBUG: HTML-Logging ---
             content_type = resp.headers.get("Content-Type", "")
             if "html" in content_type.lower():
                 text = await resp.text()
@@ -198,7 +204,7 @@ class NRWHimApi:
                     text[:500],
                 )
                 raise Exception("Server returned HTML instead of JSON")
-            # ---------------------------------------------------------
+            # --- END DEBUG ---
 
             if resp.status != 200:
                 raise Exception(f"HAFAS returned HTTP {resp.status}")
